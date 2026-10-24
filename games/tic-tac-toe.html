@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="theme-color" content="#0f172a">
+<title>لعبة إكس أو | Ahmed Tools</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:#0f172a;color:#f8fafc;font-family:Arial,sans-serif;display:flex;justify-content:center;align-items:center;padding:16px}
+.app{width:100%;max-width:430px;text-align:center}
+h1{font-size:29px;margin:8px 0}
+.subtitle{color:#94a3b8;font-size:14px;margin-bottom:22px}
+.panel{background:#1e293b;border:1px solid #334155;border-radius:20px;padding:18px;margin-bottom:16px}
+.modes{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+button{font-family:inherit;cursor:pointer;border:0;border-radius:12px;padding:13px 10px;font-size:15px;font-weight:bold}
+.mode{background:#334155;color:#e2e8f0}
+.mode.active{background:#2563eb;color:white}
+.status{font-size:17px;font-weight:bold;margin:15px 0;color:#93c5fd;min-height:24px}
+.board{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;max-width:330px;margin:18px auto}
+.cell{aspect-ratio:1;background:#334155;color:white;font-size:46px;border:2px solid #475569;border-radius:15px;padding:0}
+.cell.x{color:#60a5fa}
+.cell.o{color:#f472b6}
+.cell:disabled{cursor:default;opacity:1}
+.scores{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:16px}
+.score{background:#0f172a;padding:12px 5px;border-radius:12px}
+.score strong{display:block;font-size:22px;margin-bottom:5px}
+.score span{font-size:12px;color:#94a3b8}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.primary{background:#2563eb;color:white}
+.secondary{background:#334155;color:white}
+.back{display:inline-block;margin-top:18px;color:#93c5fd;text-decoration:none;font-size:14px}
+.hidden{display:none}
+</style>
+</head>
+<body>
+<main class="app">
+<h1>❌ إكس أو ⭕</h1>
+<p class="subtitle">تحدَّ الكمبيوتر أو العب مع صديقك</p>
+<section class="panel">
+<div class="modes">
+<button class="mode active" id="cpuMode">🤖 ضد الكمبيوتر</button>
+<button class="mode" id="friendMode">👥 مع صديق</button>
+</div>
+<div class="status" id="status">اختر خانة للبدء</div>
+<div class="board" id="board">
+<button class="cell"></button><button class="cell"></button><button class="cell"></button>
+<button class="cell"></button><button class="cell"></button><button class="cell"></button>
+<button class="cell"></button><button class="cell"></button><button class="cell"></button>
+</div>
+<div class="scores">
+<div class="score"><strong id="xScore">0</strong><span>انتصارات X</span></div>
+<div class="score"><strong id="drawScore">0</strong><span>تعادلات</span></div>
+<div class="score"><strong id="oScore">0</strong><span id="oLabel">انتصارات الكمبيوتر</span></div>
+</div>
+</section>
+<div class="actions">
+<button class="primary" id="newGame">🔄 جولة جديدة</button>
+<button class="secondary" id="resetScore">🗑️ تصفير النتائج</button>
+</div>
+<a class="back" href="index.html">→ العودة إلى عالم الألعاب</a>
+</main>
+<script>
+const cells=[...document.querySelectorAll(".cell")];
+const statusText=document.getElementById("status");
+const cpuMode=document.getElementById("cpuMode");
+const friendMode=document.getElementById("friendMode");
+const oLabel=document.getElementById("oLabel");
+let board=Array(9).fill("");
+let mode="cpu";
+let turn="X";
+let ended=false;
+let scores={x:0,o:0,draw:0};
+const wins=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+try{
+const saved=JSON.parse(localStorage.getItem("ahmedTicTacToeScores"));
+if(saved)scores={...scores,...saved};
+}catch(e){}
+function saveScores(){
+localStorage.setItem("ahmedTicTacToeScores",JSON.stringify(scores));
+document.getElementById("xScore").textContent=scores.x;
+document.getElementById("oScore").textContent=scores.o;
+document.getElementById("drawScore").textContent=scores.draw;
+}
+function winner(b=board){
+for(const line of wins){
+const [a,c,d]=line;
+if(b[a]&&b[a]===b[c]&&b[a]===b[d])return b[a];
+}
+return b.every(Boolean)?"draw":null;
+}
+function render(){
+cells.forEach((cell,i)=>{
+cell.textContent=board[i];
+cell.className="cell"+(board[i]?" "+board[i].toLowerCase():"");
+cell.disabled=ended||!!board[i]||(mode==="cpu"&&turn==="O");
+});
+}
+function finish(result){
+ended=true;
+if(result==="draw"){
+scores.draw++;
+statusText.textContent="🤝 تعادل! أحسنتم";
+}else{
+if(result==="X")scores.x++;else scores.o++;
+statusText.textContent=result==="X"?"🎉 فاز اللاعب X!":mode==="cpu"?"🤖 فاز الكمبيوتر!":"🎉 فاز اللاعب O!";
+}
+saveScores();
+render();
+}
+function minimax(b,player){
+const result=winner(b);
+if(result==="O")return {score:10};
+if(result==="X")return {score:-10};
+if(result==="draw")return {score:0};
+const moves=[];
+for(let i=0;i<9;i++){
+if(!b[i]){
+b[i]=player;
+const score=minimax(b,player==="O"?"X":"O").score;
+b[i]="";
+moves.push({index:i,score});
+}
+}
+return moves.reduce((best,m)=>{
+if(player==="O")return m.score>best.score?m:best;
+return m.score<best.score?m:best;
+},moves[0]);
+}
+function computerMove(){
+if(ended||mode!=="cpu"||turn!=="O")return;
+const available=board.map((v,i)=>v?null:i).filter(v=>v!==null);
+if(!available.length)return;
+let index;
+if(board.filter(Boolean).length<2){
+index=available[Math.floor(Math.random()*available.length)];
+}else{
+index=minimax([...board],"O").index;
+}
+board[index]="O";
+const result=winner();
+if(result)finish(result);
+else{
+turn="X";
+statusText.textContent="دورك الآن: X";
+render();
+}
+}
+function play(i){
+if(ended||board[i]||(mode==="cpu"&&turn!=="X"))return;
+board[i]=turn;
+const result=winner();
+if(result){finish(result);return}
+turn=turn==="X"?"O":"X";
+if(mode==="cpu"){
+statusText.textContent="🤖 الكمبيوتر يفكر...";
+render();
+setTimeout(computerMove,300);
+}else{
+statusText.textContent=turn==="X"?"دور اللاعب X":"دور اللاعب O";
+render();
+}
+}
+function newGame(){
+board=Array(9).fill("");
+turn="X";
+ended=false;
+statusText.textContent=mode==="cpu"?"دورك الآن: X":"دور اللاعب X";
+render();
+}
+function setMode(next){
+mode=next;
+cpuMode.classList.toggle("active",mode==="cpu");
+friendMode.classList.toggle("active",mode==="friend");
+oLabel.textContent=mode==="cpu"?"انتصارات الكمبيوتر":"انتصارات O";
+newGame();
+}
+cells.forEach((cell,i)=>cell.addEventListener("click",()=>play(i)));
+cpuMode.addEventListener("click",()=>setMode("cpu"));
+friendMode.addEventListener("click",()=>setMode("friend"));
+document.getElementById("newGame").addEventListener("click",newGame);
+document.getElementById("resetScore").addEventListener("click",()=>{
+if(confirm("هل تريد تصفير النتائج؟")){
+scores={x:0,o:0,draw:0};
+saveScores();
+newGame();
+}
+});
+saveScores();
+newGame();
+</script>
+</body>
+</html>

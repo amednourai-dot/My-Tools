@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="theme-color" content="#0f172a">
+<title>تخمين الرقم | Ahmed Tools</title>
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;min-height:100vh;background:#0f172a;color:#f8fafc;font-family:Arial,sans-serif;padding:18px;display:flex;justify-content:center;align-items:center}
+.app{width:100%;max-width:420px}
+header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+a{color:#93c5fd;text-decoration:none}
+h1{font-size:24px;margin:0}
+.subtitle{color:#94a3b8;font-size:14px;margin-top:8px}
+.card{background:#1e293b;border:1px solid #334155;border-radius:22px;padding:22px}
+.label{font-size:13px;color:#cbd5e1;display:block;margin-bottom:9px}
+select,input,button{width:100%;font:inherit;border-radius:12px;padding:13px;border:1px solid #475569}
+select,input{background:#0f172a;color:white;outline:none}
+input{text-align:center;font-size:25px;margin:14px 0}
+button{border:0;cursor:pointer;font-weight:bold}
+.primary{background:#2563eb;color:white}
+.secondary{background:#334155;color:white}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:18px 0}
+.stat{background:#0f172a;padding:13px;border-radius:13px;text-align:center}
+.stat span{display:block;color:#94a3b8;font-size:12px;margin-bottom:7px}
+.stat strong{font-size:21px}
+.message{min-height:54px;display:flex;align-items:center;justify-content:center;text-align:center;background:#0f172a;border-radius:12px;padding:12px;margin:12px 0;line-height:1.7}
+.status{font-size:13px;color:#94a3b8;text-align:center;margin-top:16px}
+.hidden{display:none}
+</style>
+</head>
+<body>
+<main class="app">
+<header>
+<div>
+<h1>🔢 تخمين الرقم</h1>
+<p class="subtitle">هل تستطيع اكتشاف الرقم السري؟</p>
+</div>
+<a href="index.html">الألعاب ←</a>
+</header>
+
+<section class="card">
+<label class="label" for="level">مستوى الصعوبة</label>
+<select id="level">
+<option value="20">سهل: من 1 إلى 20</option>
+<option value="100" selected>متوسط: من 1 إلى 100</option>
+<option value="1000">صعب: من 1 إلى 1000</option>
+</select>
+
+<div class="stats">
+<div class="stat"><span>المحاولات</span><strong id="attempts">0</strong></div>
+<div class="stat"><span>أفضل نتيجة</span><strong id="best">—</strong></div>
+</div>
+
+<div class="message" id="message" role="status" aria-live="polite">اختر المستوى، ثم اكتب رقمًا وابدأ التخمين!</div>
+
+<label class="label" for="guess">اكتب رقمًا بين 1 و<span id="maxLabel">100</span></label>
+<input id="guess" type="number" min="1" max="100" placeholder="أدخل الرقم" inputmode="numeric">
+
+<button class="primary" id="check">تحقق من الرقم</button>
+
+<div class="row">
+<button class="secondary" id="restart">لعبة جديدة</button>
+<button class="secondary" id="hint">تلميح 💡</button>
+</div>
+
+<p class="status" id="score">النقاط: 0</p>
+</section>
+</main>
+
+<script>
+const level = document.getElementById("level");
+const guess = document.getElementById("guess");
+const message = document.getElementById("message");
+const attemptsEl = document.getElementById("attempts");
+const bestEl = document.getElementById("best");
+const maxLabel = document.getElementById("maxLabel");
+const scoreEl = document.getElementById("score");
+const checkBtn = document.getElementById("check");
+const restartBtn = document.getElementById("restart");
+const hintBtn = document.getElementById("hint");
+
+let max = 100;
+let secret = 0;
+let attempts = 0;
+let finished = false;
+let score = 0;
+let hintUsed = false;
+
+function storageKey() {
+    return "ahmedToolsGuessBest_" + max;
+}
+
+function loadBest() {
+    const best = localStorage.getItem(storageKey());
+    bestEl.textContent = best === null ? "—" : best;
+}
+
+function startGame() {
+    max = Number(level.value);
+    secret = Math.floor(Math.random() * max) + 1;
+    attempts = 0;
+    finished = false;
+    score = 0;
+    hintUsed = false;
+    attemptsEl.textContent = "0";
+    scoreEl.textContent = "النقاط: 0";
+    maxLabel.textContent = max;
+    guess.max = max;
+    guess.min = 1;
+    guess.value = "";
+    guess.disabled = false;
+    checkBtn.disabled = false;
+    checkBtn.style.opacity = "1";
+    message.textContent = "خمّن الرقم بين 1 و" + max;
+    loadBest();
+}
+
+function checkGuess() {
+    if (finished) return;
+
+    const value = Number(guess.value);
+
+    if (guess.value.trim() === "" || !Number.isInteger(value) || value < 1 || value > max) {
+        message.textContent = "أدخل عددًا صحيحًا بين 1 و" + max;
+        return;
+    }
+
+    attempts++;
+    attemptsEl.textContent = attempts;
+
+    if (value === secret) {
+        finished = true;
+        const earned = Math.max(10, max - attempts * 2) * (hintUsed ? 0.5 : 1);
+        score = Math.floor(earned);
+        scoreEl.textContent = "النقاط: " + score;
+        message.textContent = "🎉 أحسنت! الرقم هو " + secret + "، فزت بعد " + attempts + " محاولة.";
+        guess.disabled = true;
+        checkBtn.disabled = true;
+        checkBtn.style.opacity = "0.5";
+
+        const oldBest = Number(localStorage.getItem(storageKey()));
+        if (!Number.isFinite(oldBest) || score > oldBest) {
+            localStorage.setItem(storageKey(), String(score));
+            bestEl.textContent = score;
+        }
+    } else if (value < secret) {
+        message.textContent = "⬆️ الرقم السري أكبر من " + value;
+        guess.value = "";
+        guess.focus();
+    } else {
+        message.textContent = "⬇️ الرقم السري أصغر من " + value;
+        guess.value = "";
+        guess.focus();
+    }
+}
+
+function giveHint() {
+    if (finished) {
+        message.textContent = "ابدأ لعبة جديدة للحصول على تلميح.";
+        return;
+    }
+
+    hintUsed = true;
+    const half = Math.floor(max / 2);
+    const parity = secret % 2 === 0 ? "زوجي" : "فردي";
+    message.textContent = "💡 الرقم " + (secret <= half ? "في النصف الأول" : "في النصف الثاني") + "، وهو " + parity + ".";
+}
+
+checkBtn.addEventListener("click", checkGuess);
+restartBtn.addEventListener("click", startGame);
+hintBtn.addEventListener("click", giveHint);
+level.addEventListener("change", startGame);
+guess.addEventListener("keydown", event => {
+    if (event.key === "Enter") checkGuess();
+});
+
+startGame();
+</script>
+</body>
+</html>

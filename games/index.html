@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="theme-color" content="#0b1020">
+<meta name="description" content="مجموعة ألعاب ذكية وممتعة من Ahmed Tools">
+<title>الألعاب | Ahmed Tools</title>
+<style>
+:root {
+    --bg: #0b1020;
+    --card: #151d32;
+    --card2: #1b2740;
+    --text: #f3f6ff;
+    --muted: #9eacc7;
+    --primary: #3b82f6;
+    --border: #293650;
+    --green: #22c55e;
+}
+* {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
+html {
+    -webkit-text-size-adjust: 100%;
+}
+body {
+    margin: 0;
+    min-height: 100vh;
+    background: var(--bg);
+    color: var(--text);
+    font-family: system-ui, -apple-system, sans-serif;
+}
+button, a {
+    font: inherit;
+}
+a {
+    color: inherit;
+    text-decoration: none;
+}
+.container {
+    width: min(100% - 24px, 850px);
+    margin: auto;
+}
+header {
+    padding: 20px 0 16px;
+    border-bottom: 1px solid var(--border);
+}
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+}
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.logo {
+    width: 44px;
+    height: 44px;
+    display: grid;
+    place-items: center;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+    font-size: 23px;
+}
+.brand h1 {
+    margin: 0;
+    font-size: 19px;
+}
+.brand p {
+    margin: 3px 0 0;
+    font-size: 12px;
+    color: var(--muted);
+}
+.back {
+    padding: 10px 13px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--card);
+    font-size: 13px;
+    white-space: nowrap;
+}
+.hero {
+    padding: 24px 0 18px;
+}
+.hero h2 {
+    margin: 0 0 8px;
+    font-size: clamp(23px, 5vw, 32px);
+}
+.hero p {
+    margin: 0;
+    color: var(--muted);
+    line-height: 1.8;
+    font-size: 14px;
+}
+.stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 20px;
+}
+.stat {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 12px 8px;
+    text-align: center;
+}
+.stat strong {
+    display: block;
+    font-size: 21px;
+    color: #60a5fa;
+}
+.stat span {
+    color: var(--muted);
+    font-size: 12px;
+}
+.section-title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin: 22px 0 13px;
+}
+.section-title h2 {
+    margin: 0;
+    font-size: 18px;
+}
+.section-title span {
+    color: var(--muted);
+    font-size: 12px;
+}
+.search {
+    width: 100%;
+    padding: 13px 15px;
+    border-radius: 13px;
+    border: 1px solid var(--border);
+    background: var(--card);
+    color: var(--text);
+    outline: none;
+    margin-bottom: 14px;
+    font-size: 14px;
+}
+.search:focus {
+    border-color: var(--primary);
+}
+.filters {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding-bottom: 5px;
+    margin-bottom: 15px;
+    scrollbar-width: none;
+}
+.filters::-webkit-scrollbar {
+    display: none;
+}
+.filter {
+    flex: 0 0 auto;
+    border: 1px solid var(--border);
+    background: var(--card);
+    color: var(--muted);
+    padding: 9px 14px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 13px;
+}
+.filter.active {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: white;
+}
+.games {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+}
+.game {
+    min-width: 0;
+    min-height: 176px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 15px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 17px;
+    transition: transform .15s, border-color .15s;
+}
+.game:active {
+    transform: scale(.98);
+}
+.game.available:hover {
+    border-color: var(--primary);
+}
+.icon {
+    width: 45px;
+    height: 45px;
+    display: grid;
+    place-items: center;
+    border-radius: 14px;
+    background: var(--card2);
+    font-size: 25px;
+    margin-bottom: 10px;
+}
+.game h3 {
+    font-size: 15px;
+    margin: 0 0 6px;
+}
+.game p {
+    font-size: 12px;
+    line-height: 1.7;
+    color: var(--muted);
+    margin: 0 0 12px;
+    flex: 1;
+}
+.badge {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 6px 10px;
+    border-radius: 8px;
+    background: rgba(34,197,94,.12);
+    color: #4ade80;
+}
+.empty {
+    display: none;
+    text-align: center;
+    padding: 25px 10px;
+    color: var(--muted);
+}
+footer {
+    text-align: center;
+    padding: 26px 0;
+    margin-top: 25px;
+    border-top: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 12px;
+}
+.home-link {
+    color: #60a5fa;
+}
+@media (min-width: 600px) {
+    .games {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+    .game {
+        min-height: 190px;
+        padding: 17px;
+    }
+}
+@media (max-width: 360px) {
+    .container {
+        width: calc(100% - 16px);
+    }
+    .games {
+        gap: 8px;
+    }
+    .game {
+        padding: 11px;
+    }
+    .game h3 {
+        font-size: 14px;
+    }
+    .game p {
+        font-size: 11px;
+    }
+    .back {
+        padding: 9px;
+        font-size: 12px;
+    }
+}
+</style>
+</head>
+<body>
+
+<header>
+    <div class="container header-content">
+        <div class="brand">
+            <div class="logo">🎮</div>
+            <div>
+                <h1>Ahmed Tools</h1>
+                <p>منطقة الألعاب</p>
+            </div>
+        </div>
+        <a class="back" href="../index.html">← الرئيسية</a>
+    </div>
+</header>
+
+<main class="container">
+    <section class="hero">
+        <h2>🎯 تحدَّ ذكاءك!</h2>
+        <p>مجموعة ألعاب خفيفة وممتعة. اختر لعبتك المفضلة وابدأ التحدي.</p>
+    </section>
+
+    <section class="stats">
+        <div class="stat">
+            <strong id="totalGames">10</strong>
+            <span>ألعاب</span>
+        </div>
+        <div class="stat">
+            <strong>🧠</strong>
+            <span>ذكاء وتركيز</span>
+        </div>
+        <div class="stat">
+            <strong>📱</strong>
+            <span>ملائم للهاتف</span>
+        </div>
+    </section>
+
+    <section>
+        <div class="section-title">
+            <h2>🕹️ جميع الألعاب</h2>
+            <span id="resultCount">10 ألعاب</span>
+        </div>
+
+        <input class="search" id="searchInput" type="search" placeholder="🔎 ابحث عن لعبة..." autocomplete="off">
+
+        <div class="filters">
+            <button class="filter active" data-filter="all">الكل</button>
+            <button class="filter" data-filter="brain">🧠 ذكاء</button>
+            <button class="filter" data-filter="fun">🎉 ترفيه</button>
+            <button class="filter" data-filter="challenge">⚡ تحدي</button>
+        </div>
+
+        <div class="games" id="gamesList">
+
+            <a class="game available" href="guess-number.html" data-category="brain challenge" data-name="تخمين الرقم">
+                <div class="icon">🔢</div>
+                <h3>تخمين الرقم</h3>
+                <p>اكتشف الرقم السري بأقل عدد من المحاولات.</p>
+                <span class="badge">العب الآن</span>
+            </a>
+
+            <a class="game available" href="tic-tac-toe.html" data-category="brain fun" data-name="إكس أو">
+                <div class="icon">⭕</div>
+                <h3>إكس أو</h3>
+                <p>واجه صديقك في لعبة إكس أو الكلاسيكية.</p>
+                <span class="badge">العب الآن</span>
+            </a>
+
+            <a class="game available" href="rock-paper-scissors.html" data-category="fun challenge" data-name="حجر ورقة مقص">
+                <div class="icon">✊</div>
+                <h3>حجر ورقة مقص</h3>
+                <p>تحدَّ الكمبيوتر واختبر حظك وسرعة قرارك.</p>
+                <span class="badge">العب الآن</span>
+            </a>
+
+            <a class="game available" href="memory-test.html" data-category="brain challenge" data-name="اختبار الذاكرة">
+                <div class="icon">🧩</div>
+                <h3>اختبار الذاكرة</h3>
+                <p>تذكر أماكن البطاقات وطابق الأزواج المتشابهة.</p>
+                <span class="badge">العب الآن</span>
+            </a>
+
+            <a class="game available" href="math-challenge.html" data-category="brain challenge" data-name="تحدي الرياضيات">
+                <div class="icon">➗</div>
+                <h3>تحدي الرياضيات</h3>
+                <p>حل المسائل الرياضية قبل انتهاء الوقت.</p>
+                <span class="badge">العب الآن</span>
+            </a>
+
+            <a class="game available" href="word-guess.html" data-category="brain fun" data-name="تخمين الكلمة">
+                <div class="icon">🔤</div>
+                <h3>تخمين الكلمة</h3>
+                <p>اكتشف الكلمة المخفية من خلال التلميحات.</p>
+                <span class="badge">العب الآن</span>
+            </a>
+
+            <a class="game available" href="minesweeper.html" data-category="brain challenge" data-name="كاسحة الألغام">
+                <div class="icon">💣</div>
+                <h3>كاسحة الألغام</h3>
+                <p>اكتشف الخلايا الآمنة وتجنب الألغام واختبر ذكاءك.</p>
+                <span class="badge">العب الآن</span>
+            </a>
+
+            <a class="game available" href="logic-puzzle.html" data-category="brain challenge" data-name="لغز منطقي">
+                <div class="icon">🧠</div>
+                <h3>لغز منطقي</h3>
+                <p>حل 10 ألغاز وتحدَّ ذكاءك مع كل سؤال.</p>
+                <span class="badge">العب الآن</span>
+            </a>
+
+            <a class="game available" href="reaction-test.html" data-category="challenge fun" data-name="اختبار سرعة الاستجابة">
+                <div class="icon">⚡</div>
+                <h3>اختبار سرعة الاستجابة</h3>
+                <p>اختبر سرعة رد فعلك واحصل على أفضل وقت.</p>
+                <span class="badge">العب الآن</span>
+            </a>
+
+            <a class="game available" href="color-challenge.html" data-category="brain challenge" data-name="تحدي الألوان">
+                <div class="icon">🎨</div>
+                <h3>تحدي الألوان</h3>
+                <p>اختبر تركيزك وسرعتك في التمييز بين الألوان.</p>
+                <span class="badge">العب الآن</span>
+            </a>
+
+        </div>
+
+        <div class="empty" id="emptyMessage">لا توجد ألعاب تطابق بحثك.</div>
+    </section>
+</main>
+
+<footer>
+    <div class="container">
+        <p>صُنع بشغف ❤️ بواسطة Ahmed Tools</p>
+        <a class="home-link" href="../index.html">العودة إلى الصفحة الرئيسية</a>
+    </div>
+</footer>
+
+<script>
+const searchInput = document.getElementById("searchInput");
+const gameCards = [...document.querySelectorAll(".game")];
+const filters = [...document.querySelectorAll(".filter")];
+const resultCount = document.getElementById("resultCount");
+const totalGames = document.getElementById("totalGames");
+const emptyMessage = document.getElementById("emptyMessage");
+
+let activeFilter = "all";
+
+function filterGames() {
+    const query = searchInput.value.trim().toLowerCase();
+    let visible = 0;
+
+    gameCards.forEach(card => {
+        const name = (card.dataset.name || "").toLowerCase();
+        const description = card.querySelector("p").textContent.toLowerCase();
+        const categories = (card.dataset.category || "").split(" ");
+
+        const matchesSearch = name.includes(query) || description.includes(query);
+        const matchesFilter = activeFilter === "all" || categories.includes(activeFilter);
+        const show = matchesSearch && matchesFilter;
+
+        card.style.display = show ? "flex" : "none";
+
+        if (show) visible++;
+    });
+
+    resultCount.textContent = visible + " ألعاب";
+    totalGames.textContent = gameCards.length;
+    emptyMessage.style.display = visible === 0 ? "block" : "none";
+}
+
+searchInput.addEventListener("input", filterGames);
+
+filters.forEach(button => {
+    button.addEventListener("click", () => {
+        filters.forEach(item => item.classList.remove("active"));
+        button.classList.add("active");
+        activeFilter = button.dataset.filter;
+        filterGames();
+    });
+});
+
+filterGames();
+</script>
+
+</body>
+</html>

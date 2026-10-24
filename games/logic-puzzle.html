@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="theme-color" content="#0b1020">
+<title>اللغز المنطقي | Ahmed Tools</title>
+<style>
+:root{--bg:#0b1020;--card:#151d32;--card2:#202c46;--text:#f3f6ff;--muted:#a4b1cb;--blue:#3b82f6;--green:#22c55e;--red:#ef4444;--border:#2b3854}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,sans-serif;min-height:100vh}
+button,select{font:inherit}
+button{cursor:pointer;touch-action:manipulation}
+.wrap{width:min(100% - 22px,650px);margin:auto}
+header{padding:17px 0;border-bottom:1px solid var(--border)}
+.head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.brand{display:flex;align-items:center;gap:10px}
+.logo{width:43px;height:43px;border-radius:14px;display:grid;place-items:center;background:linear-gradient(135deg,#3b82f6,#8b5cf6);font-size:24px}
+h1{font-size:18px;margin:0}
+.sub{font-size:12px;color:var(--muted);margin-top:3px}
+.link{color:var(--text);text-decoration:none;background:var(--card);border:1px solid var(--border);padding:9px 11px;border-radius:11px;font-size:12px;white-space:nowrap}
+.intro{padding:21px 0 14px}
+.intro h2{font-size:25px;margin:0 0 7px}
+.intro p{margin:0;color:var(--muted);font-size:13px;line-height:1.8}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:13px 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:13px;padding:11px 7px;text-align:center}
+.stat strong{display:block;color:#60a5fa;font-size:19px}
+.stat span{font-size:11px;color:var(--muted)}
+.panel{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:16px;margin:13px 0}
+.row{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+label{font-size:13px;color:var(--muted)}
+select{background:var(--card2);color:var(--text);border:1px solid var(--border);border-radius:10px;padding:9px;max-width:100%}
+.primary,.secondary{border:0;border-radius:12px;padding:12px 15px;font-weight:700}
+.primary{background:var(--blue);color:white}
+.secondary{background:var(--card2);color:var(--text);border:1px solid var(--border)}
+.full{width:100%;margin-top:12px}
+.progress{height:7px;background:var(--card2);border-radius:9px;overflow:hidden;margin:14px 0}
+.progress div{height:100%;width:0;background:linear-gradient(90deg,#3b82f6,#22c55e);transition:width .2s}
+.kicker{font-size:12px;color:#60a5fa;font-weight:700}
+.question{font-size:20px;line-height:1.8;margin:10px 0 15px;white-space:pre-line}
+.options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.option{min-height:48px;background:var(--card2);color:var(--text);border:1px solid var(--border);border-radius:12px;padding:11px;overflow-wrap:anywhere}
+.option:disabled{cursor:default;opacity:1}
+.option.correct{border-color:var(--green);background:#123525}
+.option.wrong{border-color:var(--red);background:#401d2a}
+.feedback{display:none;margin-top:13px;padding:12px;border-radius:12px;font-size:13px;line-height:1.8}
+.feedback.show{display:block}
+.feedback.good{background:#123525;color:#bbf7d0}
+.feedback.bad{background:#401d2a;color:#fecaca}
+.actions{display:flex;gap:9px;margin-top:12px}
+.actions button{flex:1}
+.note{font-size:12px;color:var(--muted);line-height:1.8}
+.hidden{display:none!important}
+.result{text-align:center;padding:12px 0}
+.result .score{font-size:38px;font-weight:800;color:#60a5fa}
+footer{text-align:center;color:var(--muted);font-size:12px;padding:20px 0}
+@media(max-width:360px){.wrap{width:calc(100% - 16px)}.panel{padding:12px}.question{font-size:18px}.options{gap:7px}.option{padding:9px;font-size:13px}}
+</style>
+</head>
+<body>
+<header><div class="wrap head">
+<div class="brand"><div class="logo">🧠</div><div><h1>Ahmed Tools</h1><div class="sub">مولّد الألغاز المنطقية</div></div></div>
+<a class="link" href="index.html">← الألعاب</a>
+</div></header>
+<main class="wrap">
+<section class="intro"><h2>تحدَّ ذكاءك</h2><p>أسئلة تتولد عند اللعب من أنماط ومعطيات متغيرة. كل جولة تضم 10 أسئلة، ويمكنك بدء جولة جديدة بأسئلة مختلفة.</p></section>
+<section class="stats">
+<div class="stat"><strong id="totalPlayed">0</strong><span>إجابات صحيحة</span></div>
+<div class="stat"><strong id="bestScore">0/10</strong><span>أفضل نتيجة</span></div>
+<div class="stat"><strong>10</strong><span>أسئلة في الجولة</span></div>
+</section>
+<section class="panel" id="setup">
+<div class="row"><label for="difficulty">مستوى الصعوبة</label><select id="difficulty"><option value="easy">سهل</option><option value="medium" selected>متوسط</option><option value="hard">صعب</option><option value="expert">خبير</option></select></div>
+<button class="primary full" id="startBtn">ابدأ جولة جديدة</button>
+<p class="note">يعتمد المولّد على قوالب متعددة وأرقام ومعطيات متغيرة. عدد التركيبات الممكنة كبير، لكن هذا لا يعني أن كل صياغة تمثل لغزًا جديدًا مستقلًا تمامًا.</p>
+</section>
+<section class="panel hidden" id="quiz">
+<div class="row"><span class="kicker" id="questionNumber">السؤال 1 من 10</span><span class="note" id="scoreLabel">النقاط: 0</span></div>
+<div class="progress"><div id="progressBar"></div></div>
+<div class="question" id="questionText"></div>
+<div class="options" id="options"></div>
+<div class="feedback" id="feedback"></div>
+<div class="actions"><button class="secondary" id="quitBtn">إنهاء الجولة</button><button class="primary hidden" id="nextBtn">السؤال التالي</button></div>
+</section>
+<section class="panel hidden" id="result">
+<div class="result"><div style="font-size:42px" id="resultIcon">🏆</div><h2 id="resultTitle">أحسنت!</h2><div class="score" id="finalScore">0/10</div><p id="resultText"></p><button class="primary full" id="againBtn">العب جولة جديدة</button><button class="secondary full" id="backBtn">تغيير مستوى الصعوبة</button></div>
+</section>
+</main>
+<footer>Ahmed Tools · ألغاز تتجدد عند كل جولة</footer>
+<script>
+const $ = id => document.getElementById(id);
+let questions = [], index = 0, score = 0, answered = false;
+let totalCorrect = Number(localStorage.getItem("logicTotalCorrect") || 0);
+let bestScore = Number(localStorage.getItem("logicBestScore") || 0);
+$("totalPlayed").textContent = totalCorrect;
+$("bestScore").textContent = bestScore + "/10";
+
+function rand(min,max){return Math.floor(Math.random()*(max-min+1))+min}
+function pick(a){return a[rand(0,a.length-1)]}
+function shuffle(a){for(let i=a.length-1;i>0;i--){let j=rand(0,i);[a[i],a[j]]=[a[j],a[i]]}return a}
+function makeQuestion(text,answer,explanation,distractors){
+    const vals = new Set([String(answer)]);
+    let tries=0;
+    while(vals.size<4 && tries<100){
+        vals.add(String(pick(distractors)));
+        tries++;
+    }
+    while(vals.size<4) vals.add(String(Number(answer)+rand(1,20)));
+    return {text,answer:String(answer),explanation,options:shuffle([...vals])};
+}
+function generateQuestion(level){
+    const scale = level==="easy"?1:level==="medium"?2:level==="hard"?4:7;
+    const types = ["arithmetic","arithmetic","geometric","squares","multiply","difference","sequence","equation","count","logic"];
+    const type = pick(types);
+    let a,d,n,seq,answer;
+    if(type==="arithmetic"){
+        a=rand(1,20*scale); d=rand(2,5*scale); seq=Array.from({length:5},(_,i)=>a+d*i); answer=a+d*5;
+        return makeQuestion("ما العدد التالي؟\n"+seq.join("، ")+"، ؟",answer,"يزداد كل عدد بمقدار "+d+".", [answer+d,answer-d,answer+rand(2,12*scale),answer-rand(2,10*scale)]);
+    }
+    if(type==="geometric"){
+        a=rand(1,8*scale); d=pick([2,3]); seq=Array.from({length:4},(_,i)=>a*Math.pow(d,i)); answer=a*Math.pow(d,4);
+        return makeQuestion("أكمل المتتالية:\n"+seq.join("، ")+"، ؟",answer,"نضرب كل عدد في "+d+".",[answer+d,answer*2,answer-d,answer+rand(3,20*scale)]);
+    }
+    if(type==="squares"){
+        n=rand(2,8*scale); seq=[n*n,(n+1)**2,(n+2)**2,(n+3)**2]; answer=(n+4)**2;
+        return makeQuestion("ما العدد التالي في نمط المربعات؟\n"+seq.join("، ")+"، ؟",answer,"هذه مربعات الأعداد المتتالية: "+(n+0)+"²، "+(n+1)+"²، "+(n+2)+"²، "+(n+3)+"²، ثم "+(n+4)+"².",[answer+1,answer-1,(n+5)**2,(n+3)**3]);
+    }
+    if(type==="multiply"){
+        a=rand(2,12*scale); d=rand(2,9); answer=a*d;
+        return makeQuestion("إذا كان "+a+" × "+d+" = ؟",answer,"نضرب "+a+" في "+d+".",[answer+a,answer+d,a+d,answer+rand(1,15)]);
+    }
+    if(type==="difference"){
+        a=rand(10,30*scale); d=rand(1,5*scale); seq=[a,a+d,a+2*d,a+3*d]; answer=a+4*d;
+        return makeQuestion("لاحظ الأعداد ثم أكمل:\n"+seq.join("، ")+"، ؟",answer,"الفرق الثابت بين الأعداد هو "+d+".",[answer+d,answer-d,answer+2*d,a+5*d]);
+    }
+    if(type==="sequence"){
+        a=rand(2,12*scale); d=rand(2,5); seq=[a,a+d,a+2*d+1,a+3*d+1]; answer=a+4*d+2;
+        return makeQuestion("ما العدد التالي؟\n"+seq.join("، ")+"، ؟",answer,"الفروق تتكرر بنمط: +"+d+"، ثم +"+(d+1)+"، ثم +"+d+"، ثم +"+(d+1)+".",[answer+d,answer-1,answer+2,answer+d+1]);
+    }
+    if(type==="equation"){
+        a=rand(2,12*scale); d=rand(2,10*scale); answer=a;
+        return makeQuestion("إذا كان س + "+d+" = "+(a+d)+"، فما قيمة س؟",answer,"نطرح "+d+" من الطرفين، فتكون س = "+answer+".",[a+d,a-d,d,answer+rand(1,8)]);
+    }
+    if(type==="count"){
+        a=rand(3,12*scale); d=rand(2,8); answer=a*d;
+        return makeQuestion("لديك "+a+" مجموعات، في كل مجموعة "+d+" عناصر. كم عنصرًا لديك؟",answer,"عدد العناصر = عدد المجموعات × عناصر كل مجموعة: "+a+" × "+d+" = "+answer+".",[a+d,a*d+d,answer-a,answer+rand(1,12)]);
+    }
+    if(type==="logic"){
+        const people=rand(3,12*scale), extra=rand(1,people-1); answer=people-extra;
+        return makeQuestion("في غرفة "+people+" أشخاص. خرج منهم "+extra+" أشخاص. كم شخصًا بقي؟",answer,"نطرح الذين خرجوا من العدد الأصلي: "+people+" − "+extra+" = "+answer+".",[people+extra,extra,people,answer+extra]);
+    }
+    a=rand(2,15*scale); d=rand(2,10); answer=a*d;
+    return makeQuestion("ما ناتج "+a+" × "+d+"؟",answer,"ناتج الضرب هو "+answer+".",[answer+a,answer+d,a+d,answer+rand(1,20)]);
+}
+function startGame(){
+    const level=$("difficulty").value;
+    questions=[];
+    for(let i=0;i<10;i++) questions.push(generateQuestion(level));
+    index=0;score=0;
+    $("setup").classList.add("hidden");
+    $("result").classList.add("hidden");
+    $("quiz").classList.remove("hidden");
+    showQuestion();
+}
+function showQuestion(){
+    answered=false;
+    const q=questions[index];
+    $("questionNumber").textContent="السؤال "+(index+1)+" من "+questions.length;
+    $("scoreLabel").textContent="النقاط: "+score;
+    $("progressBar").style.width=(index/questions.length*100)+"%";
+    $("questionText").textContent=q.text;
+    $("options").innerHTML="";
+    $("feedback").className="feedback";
+    $("feedback").textContent="";
+    $("nextBtn").classList.add("hidden");
+    q.options.forEach(option=>{
+        const b=document.createElement("button");
+        b.className="option";
+        b.textContent=option;
+        b.addEventListener("click",()=>answerQuestion(option,b));
+        $("options").appendChild(b);
+    });
+}
+function answerQuestion(value,button){
+    if(answered)return;
+    answered=true;
+    const q=questions[index];
+    const correct=value===q.answer;
+    if(correct){score++;totalCorrect++;localStorage.setItem("logicTotalCorrect",totalCorrect)}
+    [...$("options").children].forEach(b=>{
+        b.disabled=true;
+        if(b.textContent===q.answer)b.classList.add("correct");
+        else if(b===button&&!correct)b.classList.add("wrong");
+    });
+    $("totalPlayed").textContent=totalCorrect;
+    $("scoreLabel").textContent="النقاط: "+score;
+    $("feedback").className="feedback show "+(correct?"good":"bad");
+    $("feedback").textContent=(correct?"إجابة صحيحة! ✓ ":"إجابة غير صحيحة. ✗ الإجابة الصحيحة: "+q.answer+". ")+q.explanation;
+    $("progressBar").style.width=((index+1)/questions.length*100)+"%";
+    $("nextBtn").textContent=index===questions.length-1?"عرض النتيجة":"السؤال التالي";
+    $("nextBtn").classList.remove("hidden");
+}
+function finishGame(){
+    $("quiz").classList.add("hidden");
+    $("result").classList.remove("hidden");
+    $("finalScore").textContent=score+"/10";
+    $("resultIcon").textContent=score>=8?"🏆":score>=5?"👏":"💪";
+    $("resultTitle").textContent=score>=8?"ممتاز!":score>=5?"أحسنت!":"حاول مرة أخرى!";
+    $("resultText").textContent="أجبت إجابة صحيحة عن "+score+" من 10 أسئلة. ابدأ جولة جديدة للحصول على أسئلة مختلفة.";
+    if(score>bestScore){bestScore=score;localStorage.setItem("logicBestScore",bestScore)}
+    $("bestScore").textContent=bestScore+"/10";
+}
+$("startBtn").addEventListener("click",startGame);
+$("againBtn").addEventListener("click",startGame);
+$("backBtn").addEventListener("click",()=>{$("result").classList.add("hidden");$("setup").classList.remove("hidden")});
+$("quitBtn").addEventListener("click",()=>{$("quiz").classList.add("hidden");$("setup").classList.remove("hidden")});
+$("nextBtn").addEventListener("click",()=>{if(!answered)return;if(index<questions.length-1){index++;showQuestion()}else finishGame()});
+</script>
+</body>
+</html>

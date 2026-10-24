@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="theme-color" content="#101827">
+<title>اختبار سرعة الاستجابة | Ahmed Tools</title>
+<style>
+*{box-sizing:border-box}body{margin:0;min-height:100vh;background:#101827;color:#fff;font-family:Arial,sans-serif;display:flex;align-items:center;justify-content:center;padding:18px}main{width:100%;max-width:430px;text-align:center}h1{color:#60a5fa}.card{background:#1e293b;border-radius:18px;padding:22px}#arena{height:260px;border-radius:14px;background:#334155;display:flex;align-items:center;justify-content:center;font-size:25px;font-weight:bold;margin:20px 0;padding:15px;cursor:pointer;user-select:none;touch-action:manipulation}.wait{background:#b45309!important}.ready{background:#16a34a!important}.result{color:#fbbf24;font-size:24px;font-weight:bold;min-height:34px}button{border:0;border-radius:10px;background:#60a5fa;color:#0f172a;padding:13px 20px;font-size:17px;font-weight:bold}a{display:block;color:#93c5fd;text-decoration:none;margin-top:20px}
+</style>
+</head>
+<body>
+<main>
+<h1>⚡ سرعة الاستجابة</h1><div class="card">
+<p>اختبر سرعة رد فعلك. اضغط على ابدأ، وانتظر حتى يتحول المربع إلى اللون الأخضر، ثم اضغط عليه بأسرع ما يمكن!</p>
+<div id="arena">اضغط ابدأ للبدء</div><div class="result" id="result">النتيجة: —</div><p id="best">أفضل نتيجة: —</p>
+<button onclick="startTest()">ابدأ الاختبار</button></div>
+<a href="index.html">العودة إلى قائمة الألعاب</a>
+</main>
+<script>
+const arena=document.getElementById("arena"),result=document.getElementById("result"),bestEl=document.getElementById("best");
+let state="idle",timeout,startTime,best=Number(localStorage.getItem("reactionBest")||0);
+function showBest(){bestEl.textContent=best?"أفضل نتيجة: "+best+" مللي ثانية":"أفضل نتيجة: —"}
+function startTest(){clearTimeout(timeout);state="waiting";arena.className="wait";arena.textContent="انتظر اللون الأخضر...";result.textContent="استعد!";timeout=setTimeout(()=>{if(state!=="waiting")return;state="ready";startTime=performance.now();arena.className="ready";arena.textContent="اضغط الآن!"},1500+Math.random()*3500)}
+arena.addEventListener("click",()=>{if(state==="waiting"){clearTimeout(timeout);state="early";arena.className="";arena.textContent="ضغطت مبكرًا!";result.textContent="حاول مرة أخرى.";return}if(state==="ready"){let ms=Math.round(performance.now()-startTime);state="done";arena.className="";arena.textContent="زمنك "+ms+" مللي ثانية";result.textContent="زمن الاستجابة: "+ms+" ms";if(!best||ms<best){best=ms;localStorage.setItem("reactionBest",best)}showBest();return}if(state==="idle"||state==="done"||state==="early")result.textContent="اضغط ابدأ لجولة جديدة."});
+showBest();
+</script>
+</body>
+</html>

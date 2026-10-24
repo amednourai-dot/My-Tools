@@ -1,0 +1,321 @@
+احفظ الكود التالي كاملًا داخل "games/extra-games.html":
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="theme-color" content="#0f172a">
+<title>ألعاب التحدي | Ahmed Tools</title>
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;padding:16px;background:#0f172a;color:#f8fafc;font-family:Arial,sans-serif;min-height:100vh}
+.app{width:100%;max-width:480px;margin:auto}
+header{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:20px}
+h1{font-size:24px;margin:0 0 6px}
+.subtitle{color:#94a3b8;font-size:13px;margin:0}
+a{color:#93c5fd;text-decoration:none}
+button,input{font:inherit}
+button{border:0;border-radius:12px;padding:12px;background:#2563eb;color:white;font-weight:bold;cursor:pointer}
+button:disabled{opacity:.5;cursor:default}
+.back{background:#1e293b;padding:10px 12px;border-radius:10px;white-space:nowrap;font-size:13px}
+.panel{background:#1e293b;border:1px solid #334155;border-radius:18px;padding:16px;margin-bottom:14px}
+h2{font-size:20px;margin:0 0 12px}
+.description{color:#94a3b8;font-size:13px;line-height:1.7}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+.row button{flex:1}
+.status{margin:15px 0;min-height:25px;text-align:center;font-weight:bold;color:#93c5fd;line-height:1.7}
+.scoreboard{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:14px 0}
+.score{background:#0f172a;border-radius:12px;padding:10px 4px;text-align:center}
+.score strong{display:block;font-size:22px;margin-bottom:5px}
+.score span{font-size:11px;color:#94a3b8}
+.hidden{display:none!important}
+.choices{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:18px 0}
+.choice{font-size:35px;min-height:85px;background:#334155}
+.choice small{display:block;font-size:12px;margin-top:5px}
+.memory-board{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:16px 0}
+.memory-card{padding:0;aspect-ratio:1;font-size:26px;background:#334155;border:1px solid #475569}
+.memory-card.open{background:#2563eb}
+.memory-card.matched{background:#166534}
+input{width:100%;padding:13px;border:1px solid #475569;border-radius:12px;background:#0f172a;color:white;outline:none;margin:8px 0}
+input:focus{border-color:#60a5fa}
+.question{font-size:34px;font-weight:bold;text-align:center;margin:24px 0}
+.word{font-size:28px;letter-spacing:5px;text-align:center;direction:ltr;margin:22px 0;line-height:1.8}
+.letter-buttons{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px;margin-top:14px}
+.letter-buttons button{padding:10px 0;background:#334155}
+.letter-buttons button.used{background:#475569;opacity:.5}
+footer{text-align:center;color:#64748b;font-size:12px;padding:15px}
+@media(min-width:600px){body{padding-top:28px}}
+</style>
+</head>
+<body>
+<main class="app">
+<header>
+<div>
+<h1 id="title">🎮 ألعاب التحدي</h1>
+<p class="subtitle">Ahmed Tools · تحدَّ نفسك</p>
+</div>
+<a class="back" href="index.html">قائمة الألعاب</a>
+</header>
+
+<section class="panel" id="memoryGame">
+<h2>🧠 اختبار الذاكرة</h2>
+<p class="description">اقلب البطاقات وابحث عن كل زوج متطابق. حاول إنهاء اللعبة بأقل عدد من الحركات.</p>
+<div class="scoreboard">
+<div class="score"><strong id="memoryMoves">0</strong><span>الحركات</span></div>
+<div class="score"><strong id="memoryPairs">0/8</strong><span>الأزواج</span></div>
+<div class="score"><strong id="memoryBest">—</strong><span>أفضل نتيجة</span></div>
+</div>
+<div class="memory-board" id="memoryBoard"></div>
+<div class="status" id="memoryStatus">اضغط على بطاقة لبدء اللعب</div>
+<button id="memoryRestart" style="width:100%">🔄 لعبة جديدة</button>
+</section>
+
+<section class="panel" id="mathGame">
+<h2>⚡ تحدي الرياضيات</h2>
+<p class="description">أجب عن أكبر عدد من المسائل خلال 60 ثانية. كل إجابة صحيحة تمنحك نقطة.</p>
+<div class="scoreboard">
+<div class="score"><strong id="mathScore">0</strong><span>النقاط</span></div>
+<div class="score"><strong id="mathTime">60</strong><span>الثواني</span></div>
+<div class="score"><strong id="mathBest">0</strong><span>أفضل نتيجة</span></div>
+</div>
+<div class="question" id="mathQuestion">جاهز؟</div>
+<div class="row">
+<button id="mathStart">ابدأ التحدي</button>
+</div>
+<form id="mathForm" class="hidden">
+<input id="mathAnswer" type="number" inputmode="numeric" placeholder="اكتب الإجابة" autocomplete="off" required>
+<button type="submit" style="width:100%">تحقق من الإجابة</button>
+</form>
+<div class="status" id="mathStatus">اضغط ابدأ عندما تكون جاهزًا</div>
+</section>
+
+<section class="panel" id="wordGame">
+<h2>🔤 تخمين الكلمة</h2>
+<p class="description">اكتشف الكلمة المخفية حرفًا بعد حرف. لديك 6 محاولات خاطئة فقط.</p>
+<div class="scoreboard">
+<div class="score"><strong id="wordWins">0</strong><span>الانتصارات</span></div>
+<div class="score"><strong id="wordLeft">6</strong><span>المحاولات</span></div>
+<div class="score"><strong id="wordBest">0</strong><span>أفضل سلسلة</span></div>
+</div>
+<div class="status" id="wordHint">التلميح سيظهر هنا</div>
+<div class="word" id="wordDisplay"></div>
+<div class="letter-buttons" id="letterButtons"></div>
+<div class="status" id="wordStatus">اختر حرفًا لتبدأ</div>
+<button id="wordRestart" style="width:100%">🔄 كلمة جديدة</button>
+</section>
+
+<footer>Ahmed Tools · ألعاب مجانية تعمل على هاتفك</footer>
+</main>
+
+<script>
+const params=new URLSearchParams(location.search);
+const selected=params.get("game");
+const title=document.getElementById("title");
+const sections={
+memory:document.getElementById("memoryGame"),
+math:document.getElementById("mathGame"),
+word:document.getElementById("wordGame")
+};
+if(sections[selected]){
+Object.entries(sections).forEach(([key,element])=>{
+element.classList.toggle("hidden",key!==selected);
+});
+title.textContent={memory:"🧠 اختبار الذاكرة",math:"⚡ تحدي الرياضيات",word:"🔤 تخمين الكلمة"}[selected];
+}
+
+let memoryValues=[],memoryOpen=[],memoryFound=[],memoryMoves=0,memoryLock=false;
+const memorySymbols=["🍎","🚀","⚽","🎵","🐱","🌟","🍕","🎮"];
+let memoryBest=Number(localStorage.getItem("ahmedMemoryBest"))||0;
+document.getElementById("memoryBest").textContent=memoryBest||"—";
+
+function startMemory(){
+memoryValues=[...memorySymbols,...memorySymbols].sort(()=>Math.random()-.5);
+memoryOpen=[];
+memoryFound=[];
+memoryMoves=0;
+memoryLock=false;
+document.getElementById("memoryMoves").textContent="0";
+document.getElementById("memoryPairs").textContent="0/8";
+document.getElementById("memoryStatus").textContent="ابحث عن البطاقات المتطابقة";
+const board=document.getElementById("memoryBoard");
+board.innerHTML="";
+memoryValues.forEach((symbol,index)=>{
+const button=document.createElement("button");
+button.className="memory-card";
+button.textContent="❔";
+button.setAttribute("aria-label","بطاقة ذاكرة");
+button.addEventListener("click",()=>flipMemory(index,button));
+board.appendChild(button);
+});
+}
+function flipMemory(index,button){
+if(memoryLock||memoryOpen.includes(index)||memoryFound.includes(index))return;
+button.textContent=memoryValues[index];
+button.classList.add("open");
+memoryOpen.push(index);
+if(memoryOpen.length===2){
+memoryMoves++;
+document.getElementById("memoryMoves").textContent=memoryMoves;
+const cards=document.querySelectorAll(".memory-card");
+const [first,second]=memoryOpen;
+if(memoryValues[first]===memoryValues[second]){
+memoryFound.push(first,second);
+cards[first].classList.add("matched");
+cards[second].classList.add("matched");
+memoryOpen=[];
+document.getElementById("memoryPairs").textContent=(memoryFound.length/2)+"/8";
+if(memoryFound.length===16){
+document.getElementById("memoryStatus").textContent="🎉 أحسنت! أكملت اللعبة في "+memoryMoves+" حركة";
+if(!memoryBest||memoryMoves<memoryBest){
+memoryBest=memoryMoves;
+localStorage.setItem("ahmedMemoryBest",memoryBest);
+document.getElementById("memoryBest").textContent=memoryBest;
+}
+}
+}else{
+memoryLock=true;
+setTimeout(()=>{
+cards[first].textContent="❔";
+cards[second].textContent="❔";
+cards[first].classList.remove("open");
+cards[second].classList.remove("open");
+memoryOpen=[];
+memoryLock=false;
+},750);
+}
+}
+}
+document.getElementById("memoryRestart").addEventListener("click",startMemory);
+startMemory();
+
+let mathScore=0,mathRemaining=60,mathTimer=null,mathActive=false,mathCorrect=0;
+let mathBest=Number(localStorage.getItem("ahmedMathBest"))||0;
+document.getElementById("mathBest").textContent=mathBest;
+function mathQuestion(){
+let a,b,op=Math.floor(Math.random()*4);
+if(op===0){a=Math.floor(Math.random()*30)+1;b=Math.floor(Math.random()*30)+1;mathCorrect=a+b;op="+"}
+else if(op===1){a=Math.floor(Math.random()*30)+1;b=Math.floor(Math.random()*a)+1;mathCorrect=a-b;op="−"}
+else if(op===2){a=Math.floor(Math.random()*12)+1;b=Math.floor(Math.random()*12)+1;mathCorrect=a*b;op="×"}
+else{b=Math.floor(Math.random()*10)+1;mathCorrect=Math.floor(Math.random()*12)+1;a=b*mathCorrect;op="÷"}
+document.getElementById("mathQuestion").textContent=a+" "+op+" "+b+" = ؟";
+}
+function endMath(){
+mathActive=false;
+clearInterval(mathTimer);
+document.getElementById("mathForm").classList.add("hidden");
+document.getElementById("mathStart").classList.remove("hidden");
+document.getElementById("mathStart").textContent="العب مرة أخرى";
+document.getElementById("mathQuestion").textContent="انتهى الوقت!";
+document.getElementById("mathStatus").textContent="نتيجتك: "+mathScore+" نقطة";
+if(mathScore>mathBest){
+mathBest=mathScore;
+localStorage.setItem("ahmedMathBest",mathBest);
+document.getElementById("mathBest").textContent=mathBest;
+}
+}
+document.getElementById("mathStart").addEventListener("click",()=>{
+clearInterval(mathTimer);
+mathScore=0;
+mathRemaining=60;
+document.getElementById("mathScore").textContent="0";
+document.getElementById("mathTime").textContent="60";
+document.getElementById("mathStatus").textContent="بالتوفيق!";
+document.getElementById("mathForm").classList.remove("hidden");
+document.getElementById("mathStart").classList.add("hidden");
+mathActive=true;
+mathQuestion();
+document.getElementById("mathAnswer").value="";
+document.getElementById("mathAnswer").focus();
+mathTimer=setInterval(()=>{
+mathRemaining--;
+document.getElementById("mathTime").textContent=mathRemaining;
+if(mathRemaining<=0)endMath();
+},1000);
+});
+document.getElementById("mathForm").addEventListener("submit",event=>{
+event.preventDefault();
+if(!mathActive)return;
+const answer=Number(document.getElementById("mathAnswer").value);
+if(answer===mathCorrect){
+mathScore++;
+document.getElementById("mathScore").textContent=mathScore;
+document.getElementById("mathStatus").textContent="✅ إجابة صحيحة!";
+}else{
+document.getElementById("mathStatus").textContent="❌ الإجابة الصحيحة: "+mathCorrect;
+}
+document.getElementById("mathAnswer").value="";
+mathQuestion();
+});
+
+const words=[
+{word:"برمجة",hint:"كتابة التعليمات للحاسوب"},
+{word:"حاسوب",hint:"جهاز إلكتروني لمعالجة البيانات"},
+{word:"شبكة",hint:"ربط الأجهزة ببعضها"},
+{word:"متصفح",hint:"برنامج لفتح مواقع الإنترنت"},
+{word:"هاتف",hint:"جهاز محمول للاتصال"},
+{word:"مدرسة",hint:"مكان للتعلم"},
+{word:"جامعة",hint:"مكان للدراسة العليا"},
+{word:"نجاح",hint:"تحقيق الهدف"}
+];
+let currentWord="",guessedLetters=[],wrongLetters=0,wordWins=0,wordStreak=0,wordRoundOver=false;
+let wordBest=Number(localStorage.getItem("ahmedWordBest"))||0;
+document.getElementById("wordBest").textContent=wordBest;
+function startWord(){
+const entry=words[Math.floor(Math.random()*words.length)];
+currentWord=entry.word;
+guessedLetters=[];
+wrongLetters=0;
+wordRoundOver=false;
+document.getElementById("wordHint").textContent="💡 التلميح: "+entry.hint;
+document.getElementById("wordLeft").textContent="6";
+document.getElementById("wordStatus").textContent="اختر حرفًا";
+renderWord();
+}
+function renderWord(){
+const display=[...currentWord].map(letter=>guessedLetters.includes(letter)?letter:"＿").join(" ");
+document.getElementById("wordDisplay").textContent=display;
+const letters="ابتثجحخدذرزسشصضطظعغفقكلمنهويءأةإآ".split("");
+const container=document.getElementById("letterButtons");
+container.innerHTML="";
+letters.forEach(letter=>{
+const button=document.createElement("button");
+button.textContent=letter;
+button.disabled=guessedLetters.includes(letter)||wordRoundOver;
+if(guessedLetters.includes(letter))button.classList.add("used");
+button.addEventListener("click",()=>guessLetter(letter));
+container.appendChild(button);
+});
+}
+function guessLetter(letter){
+if(wordRoundOver||guessedLetters.includes(letter))return;
+guessedLetters.push(letter);
+if(!currentWord.includes(letter)){
+wrongLetters++;
+document.getElementById("wordLeft").textContent=6-wrongLetters;
+}
+if([...currentWord].every(letter=>guessedLetters.includes(letter))){
+wordRoundOver=true;
+wordWins++;
+wordStreak++;
+document.getElementById("wordWins").textContent=wordWins;
+document.getElementById("wordStatus").textContent="🎉 أحسنت! اكتشفت الكلمة";
+if(wordStreak>wordBest){
+wordBest=wordStreak;
+localStorage.setItem("ahmedWordBest",wordBest);
+document.getElementById("wordBest").textContent=wordBest;
+}
+}else if(wrongLetters>=6){
+wordRoundOver=true;
+wordStreak=0;
+document.getElementById("wordStatus").textContent="انتهت المحاولات! الكلمة هي: "+currentWord;
+}else{
+document.getElementById("wordStatus").textContent=currentWord.includes(letter)?"✅ حرف صحيح":"❌ حرف غير موجود";
+}
+renderWord();
+}
+document.getElementById("wordRestart").addEventListener("click",startWord);
+startWord();
+</script>
+</body>
+</html>

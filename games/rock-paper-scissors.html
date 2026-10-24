@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="theme-color" content="#0f172a">
+<meta name="description" content="لعبة حجر ورقة مقص - Ahmed Tools">
+<title>حجر ورقة مقص | Ahmed Tools</title>
+<style>
+* {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
+:root {
+    color-scheme: dark;
+}
+body {
+    margin: 0;
+    min-height: 100vh;
+    padding: 16px;
+    background: #0f172a;
+    color: #f8fafc;
+    font-family: Arial, sans-serif;
+}
+button, a {
+    font: inherit;
+}
+button {
+    cursor: pointer;
+    touch-action: manipulation;
+}
+.container {
+    width: 100%;
+    max-width: 520px;
+    margin: auto;
+}
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 22px;
+}
+header h1 {
+    margin: 0;
+    font-size: 22px;
+}
+header p {
+    color: #94a3b8;
+    font-size: 13px;
+    margin: 7px 0 0;
+}
+.back {
+    color: white;
+    text-decoration: none;
+    background: #334155;
+    border-radius: 12px;
+    padding: 10px 12px;
+    font-size: 13px;
+    white-space: nowrap;
+}
+.hero {
+    background: linear-gradient(135deg, #1d4ed8, #7c3aed);
+    border-radius: 20px;
+    padding: 20px 14px;
+    text-align: center;
+    margin-bottom: 16px;
+}
+.hero h2 {
+    font-size: 21px;
+    margin: 0 0 8px;
+}
+.hero p {
+    font-size: 13px;
+    line-height: 1.7;
+    color: #e0e7ff;
+    margin: 0;
+}
+.scoreboard {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+.score-card {
+    background: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 16px;
+    padding: 16px 10px;
+    text-align: center;
+}
+.score-card .emoji {
+    font-size: 30px;
+}
+.score-card .name {
+    color: #cbd5e1;
+    font-size: 13px;
+    margin: 8px 0;
+}
+.score {
+    font-size: 32px;
+    font-weight: bold;
+    color: #60a5fa;
+}
+.panel {
+    background: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 18px;
+    padding: 17px 13px;
+    margin-bottom: 16px;
+}
+.panel-title {
+    text-align: center;
+    font-size: 16px;
+    margin: 0 0 15px;
+}
+.battle {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+.battle-card {
+    background: #0f172a;
+    border: 1px solid #334155;
+    border-radius: 14px;
+    padding: 16px 8px;
+    text-align: center;
+}
+.battle-card .symbol {
+    font-size: 43px;
+    min-height: 55px;
+}
+.battle-card .label {
+    font-size: 12px;
+    color: #94a3b8;
+    margin-top: 8px;
+}
+.result {
+    margin-top: 14px;
+    padding: 13px 8px;
+    text-align: center;
+    background: #0f172a;
+    border-radius: 12px;
+    color: #e2e8f0;
+    font-size: 15px;
+    line-height: 1.7;
+    min-height: 48px;
+}
+.result.win {
+    color: #4ade80;
+}
+.result.lose {
+    color: #f87171;
+}
+.result.draw {
+    color: #facc15;
+}
+.choices {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 9px;
+}
+.choice {
+    border: 1px solid #475569;
+    border-radius: 15px;
+    background: #334155;
+    color: white;
+    padding: 15px 4px;
+    min-width: 0;
+    transition: transform .12s, background .12s;
+}
+.choice:active {
+    transform: scale(.94);
+}
+.choice .emoji {
+    display: block;
+    font-size: 35px;
+    margin-bottom: 9px;
+}
+.choice span:last-child {
+    font-size: 13px;
+}
+.choice:disabled {
+    opacity: .5;
+}
+.actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 14px;
+}
+.action {
+    padding: 12px 8px;
+    border: 0;
+    border-radius: 12px;
+    background: #2563eb;
+    color: white;
+}
+.action.secondary {
+    background: #334155;
+}
+.history {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.history-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 10px;
+    border-radius: 10px;
+    background: #0f172a;
+    font-size: 12px;
+}
+.history-item .status {
+    font-weight: bold;
+}
+.history-item .status.win {
+    color: #4ade80;
+}
+.history-item .status.lose {
+    color: #f87171;
+}
+.history-item .status.draw {
+    color: #facc15;
+}
+.empty {
+    color: #94a3b8;
+    text-align: center;
+    font-size: 13px;
+    padding: 12px 0;
+}
+footer {
+    text-align: center;
+    font-size: 12px;
+    color: #64748b;
+    margin: 22px 0 8px;
+}
+@media (max-width: 350px) {
+    body {
+        padding: 10px;
+    }
+    header h1 {
+        font-size: 18px;
+    }
+    .choice .emoji {
+        font-size: 29px;
+    }
+    .choice {
+        padding: 12px 2px;
+    }
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+<header>
+    <div>
+        <h1>✊ حجر ورقة مقص</h1>
+        <p>تحدَّ الكمبيوتر واجمع النقاط</p>
+    </div>
+    <a class="back" href="index.html">الألعاب</a>
+</header>
+
+<section class="hero">
+    <h2>هل تستطيع الفوز؟ 🏆</h2>
+    <p>الحجر يهزم المقص، والمقص يهزم الورقة، والورقة تهزم الحجر.</p>
+</section>
+
+<section class="scoreboard">
+    <div class="score-card">
+        <div class="emoji">🧑</div>
+        <div class="name">أنت</div>
+        <div class="score" id="player-score">0</div>
+    </div>
+    <div class="score-card">
+        <div class="emoji">🤖</div>
+        <div class="name">الكمبيوتر</div>
+        <div class="score" id="computer-score">0</div>
+    </div>
+</section>
+
+<section class="panel">
+    <h2 class="panel-title">⚔️ الجولة الحالية</h2>
+    <div class="battle">
+        <div class="battle-card">
+            <div class="symbol" id="player-choice">❔</div>
+            <div class="label">اختيارك</div>
+        </div>
+        <div class="battle-card">
+            <div class="symbol" id="computer-choice">❔</div>
+            <div class="label">اختيار الكمبيوتر</div>
+        </div>
+    </div>
+    <div class="result" id="result" aria-live="polite">اختر حجرًا أو ورقة أو مقصًا للبدء!</div>
+</section>
+
+<section class="panel">
+    <h2 class="panel-title">👇 اختر حركتك</h2>
+    <div class="choices">
+        <button class="choice" data-choice="rock">
+            <span class="emoji">✊</span>
+            <span>حجر</span>
+        </button>
+        <button class="choice" data-choice="paper">
+            <span class="emoji">✋</span>
+            <span>ورقة</span>
+        </button>
+        <button class="choice" data-choice="scissors">
+            <span class="emoji">✌️</span>
+            <span>مقص</span>
+        </button>
+    </div>
+    <div class="actions">
+        <button class="action" id="new-round">🔄 جولة جديدة</button>
+        <button class="action secondary" id="reset">🗑️ تصفير النقاط</button>
+    </div>
+</section>
+
+<section class="panel">
+    <h2 class="panel-title">📋 آخر الجولات</h2>
+    <div class="history" id="history">
+        <div class="empty">لم تلعب أي جولة بعد.</div>
+    </div>
+</section>
+
+<footer>Ahmed Tools · استمتع باللعب 🎮</footer>
+
+</div>
+
+<script>
+const choices = {
+    rock: {name: "حجر", emoji: "✊"},
+    paper: {name: "ورقة", emoji: "✋"},
+    scissors: {name: "مقص", emoji: "✌️"}
+};
+
+const playerScoreElement = document.getElementById("player-score");
+const computerScoreElement = document.getElementById("computer-score");
+const playerChoiceElement = document.getElementById("player-choice");
+const computerChoiceElement = document.getElementById("computer-choice");
+const resultElement = document.getElementById("result");
+const historyElement = document.getElementById("history");
+const choiceButtons = document.querySelectorAll(".choice");
+
+let playerScore = 0;
+let computerScore = 0;
+let history = [];
+
+function renderScores() {
+    playerScoreElement.textContent = playerScore;
+    computerScoreElement.textContent = computerScore;
+}
+
+function renderHistory() {
+    if (history.length === 0) {
+        historyElement.innerHTML = '<div class="empty">لم تلعب أي جولة بعد.</div>';
+        return;
+    }
+
+    historyElement.innerHTML = history.map(item => `
+        <div class="history-item">
+            <span>${item.player} ${item.playerEmoji} × ${item.computerEmoji} ${item.computer}</span>
+            <span class="status ${item.className}">${item.result}</span>
+        </div>
+    `).join("");
+}
+
+function play(playerChoice) {
+    const keys = Object.keys(choices);
+    const computerChoice = keys[Math.floor(Math.random() * keys.length)];
+
+    playerChoiceElement.textContent = choices[playerChoice].emoji;
+    computerChoiceElement.textContent = choices[computerChoice].emoji;
+
+    let result;
+    let className;
+
+    if (playerChoice === computerChoice) {
+        result = "تعادل!";
+        className = "draw";
+    } else if (
+        (playerChoice === "rock" && computerChoice === "scissors") ||
+        (playerChoice === "paper" && computerChoice === "rock") ||
+        (playerChoice === "scissors" && computerChoice === "paper")
+    ) {
+        result = "أنت فزت! 🎉";
+        className = "win";
+        playerScore++;
+    } else {
+        result = "الكمبيوتر فاز!";
+        className = "lose";
+        computerScore++;
+    }
+
+    resultElement.textContent = result;
+    resultElement.className = "result " + className;
+
+    history.unshift({
+        player: choices[playerChoice].name,
+        playerEmoji: choices[playerChoice].emoji,
+        computer: choices[computerChoice].name,
+        computerEmoji: choices[computerChoice].emoji,
+        result: result,
+        className: className
+    });
+
+    history = history.slice(0, 8);
+
+    renderScores();
+    renderHistory();
+}
+
+function newRound() {
+    playerChoiceElement.textContent = "❔";
+    computerChoiceElement.textContent = "❔";
+    resultElement.textContent = "اختر حركتك لبدء جولة جديدة!";
+    resultElement.className = "result";
+}
+
+function resetGame() {
+    playerScore = 0;
+    computerScore = 0;
+    history = [];
+    renderScores();
+    renderHistory();
+    newRound();
+}
+
+choiceButtons.forEach(button => {
+    button.addEventListener("click", () => {
+        play(button.dataset.choice);
+    });
+});
+
+document.getElementById("new-round").addEventListener("click", newRound);
+document.getElementById("reset").addEventListener("click", resetGame);
+
+renderScores();
+renderHistory();
+</script>
+</body>
+      </html>

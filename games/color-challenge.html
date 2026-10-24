@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="theme-color" content="#101827">
+<title>تحدي الألوان | Ahmed Tools</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#101827;color:#fff;font-family:Arial,sans-serif;min-height:100vh;display:flex;justify-content:center;padding:18px}main{width:100%;max-width:440px;text-align:center}h1{color:#c084fc}.panel{background:#1e293b;border-radius:18px;padding:20px}.stats{display:flex;gap:10px}.stat{flex:1;background:#334155;padding:12px 5px;border-radius:10px}.stat strong{display:block;font-size:23px;margin-top:5px}#colorWord{font-size:43px;font-weight:bold;margin:28px 0}.options{display:grid;grid-template-columns:1fr 1fr;gap:12px}.options button{padding:17px 5px;border:0;border-radius:12px;font-size:18px;font-weight:bold;color:white;min-height:60px}#start{margin-top:18px;background:#c084fc;color:#1e1b4b;border:0;border-radius:10px;padding:13px 22px;font-size:17px;font-weight:bold}#message{min-height:28px;color:#fbbf24}a{display:block;color:#93c5fd;text-decoration:none;margin:20px}
+</style>
+</head>
+<body>
+<main>
+<h1>🎨 تحدي الألوان</h1><p>اختر اسم اللون الذي كُتب به النص، وليس معنى الكلمة المكتوبة!</p>
+<div class="panel"><div class="stats"><div class="stat">النقاط<strong id="score">0</strong></div><div class="stat">الوقت<strong id="time">30</strong></div></div>
+<div id="colorWord">مستعد؟</div><div class="options" id="options"></div>
+<p id="message">لديك 30 ثانية. كم إجابة صحيحة تستطيع تحقيقها؟</p><button id="start" onclick="startGame()">ابدأ التحدي</button></div>
+<a href="index.html">العودة إلى قائمة الألعاب</a>
+</main>
+<script>
+const colors=[{name:"أحمر",value:"#ef4444"},{name:"أزرق",value:"#3b82f6"},{name:"أخضر",value:"#22c55e"},{name:"أصفر",value:"#eab308"},{name:"بنفسجي",value:"#a855f7"},{name:"برتقالي",value:"#f97316"}];
+const word=document.getElementById("colorWord"),options=document.getElementById("options"),scoreEl=document.getElementById("score"),timeEl=document.getElementById("time"),message=document.getElementById("message");
+let score=0,time=30,timer=null,active=false,answer="";
+function shuffle(arr){return arr.sort(()=>Math.random()-.5)}
+function nextRound(){let textColor=colors[Math.floor(Math.random()*colors.length)],inkColor;do{inkColor=colors[Math.floor(Math.random()*colors.length)]}while(inkColor.name===textColor.name);answer=inkColor.name;word.textContent=textColor.name;word.style.color=inkColor.value;options.innerHTML="";let choices=shuffle([inkColor,...shuffle(colors.filter(c=>c.name!==inkColor.name)).slice(0,3)]);choices=shuffle(choices);choices.forEach(c=>{let b=document.createElement("button");b.textContent=c.name;b.style.background=c.value;b.onclick=()=>check(c.name);options.appendChild(b)})}
+function check(choice){if(!active)return;if(choice===answer){score++;scoreEl.textContent=score;message.textContent="إجابة صحيحة! أحسنت 🎉"}else message.textContent="خطأ! كان اللون الصحيح "+answer;nextRound()}
+function startGame(){clearInterval(timer);score=0;time=30;active=true;scoreEl.textContent=score;timeEl.textContent=time;document.getElementById("start").textContent="ابدأ من جديد";message.textContent="انطلق!";nextRound();timer=setInterval(()=>{time--;timeEl.textContent=time;if(time<=0){clearInterval(timer);active=false;word.style.color="#fff";word.textContent="انتهى الوقت!";options.innerHTML="";message.textContent="حققت "+score+" إجابة صحيحة. حاول مرة أخرى!"}},1000)}
+</script>
+</body>
+</html>
