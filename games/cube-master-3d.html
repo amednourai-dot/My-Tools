@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#101629">
+<meta name="description" content="لعبة ألغاز ثلاثية الأبعاد من Ahmed Tools">
+<title>Cube Master 3D | Ahmed Tools</title>
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{color-scheme:dark}
+html,body{margin:0;width:100%;height:100%;overflow:hidden}
+body{background:radial-gradient(ellipse at 50% 35%,#263858 0%,#141d32 55%,#090e1b 100%);color:#fff;font-family:system-ui,-apple-system,sans-serif;overscroll-behavior:none;touch-action:pan-y}
+button{font:inherit;border:0;cursor:pointer;touch-action:manipulation}
+button:focus-visible{outline:2px solid #6ee7ff;outline-offset:3px}
+.game{height:100vh;height:100dvh;width:100%;max-width:600px;margin:auto;display:flex;flex-direction:column;padding:env(safe-area-inset-top) 13px env(safe-area-inset-bottom);overflow:hidden}
+.top{height:48px;flex-shrink:0;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.brand{font-weight:950;font-size:17px;letter-spacing:.3px;white-space:nowrap}
+.brand span{color:#65e5ff}
+.icon{background:#ffffff12;color:white;border:1px solid #ffffff20;border-radius:13px;padding:8px 11px;font-size:13px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;flex-shrink:0}
+.stat{background:linear-gradient(145deg,#ffffff12,#ffffff05);border:1px solid #ffffff15;border-radius:14px;padding:6px 4px;text-align:center}
+.stat small{display:block;color:#aebbd5;font-size:11px}
+.stat strong{display:block;font-size:18px;margin-top:1px;font-variant-numeric:tabular-nums}
+.progress{height:4px;background:#ffffff18;border-radius:20px;margin-top:8px;overflow:hidden;flex-shrink:0}
+.progress div{height:100%;width:100%;background:linear-gradient(90deg,#4de4ff,#8c76ff);transition:width .3s}
+.scene{position:relative;flex:1;min-height:0;margin:6px -4px;overflow:hidden;border-radius:23px;isolation:isolate}
+#world{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none;user-select:none;-webkit-user-select:none;outline:none}
+.hint{position:absolute;top:10px;left:5px;right:5px;text-align:center;font-size:12px;color:#d4e0f7;pointer-events:none;text-shadow:0 2px 8px #000;z-index:1}
+.level-tag{position:absolute;bottom:10px;left:10px;background:#101629b8;border:1px solid #ffffff20;border-radius:11px;padding:6px 9px;font-size:11px;pointer-events:none}
+.collection{flex-shrink:0;background:linear-gradient(145deg,#ffffff12,#ffffff06);border:1px solid #ffffff18;border-radius:17px;padding:9px}
+.collection-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px;font-size:12px}
+.collection-head span:last-child{color:#b8c6df;font-variant-numeric:tabular-nums}
+.slots{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px}
+.slot{height:39px;display:flex;align-items:center;justify-content:center;background:#070c19a8;border:1px dashed #ffffff28;border-radius:10px;font-size:21px;min-width:0}
+.slot.filled{border-style:solid;border-color:#6d8dff70;background:#273a60;animation:pop .18s ease}
+.slot.match{background:#145b53;border-color:#6bffd5}
+@keyframes pop{50%{transform:scale(1.1)}}
+.actions{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;padding:8px 0 5px;flex-shrink:0}
+.action{border-radius:13px;padding:10px 4px;color:white;background:#ffffff12;border:1px solid #ffffff18;font-size:12px;font-weight:750}
+.action.primary{background:linear-gradient(135deg,#477cff,#795bff);border-color:transparent}
+.action:disabled{opacity:.4}
+.overlay{position:fixed;inset:0;background:#060a14dc;backdrop-filter:blur(10px);display:none;align-items:center;justify-content:center;padding:22px;z-index:10}
+.overlay.show{display:flex}
+.dialog{width:100%;max-width:340px;background:linear-gradient(145deg,#202e4c,#121b30);border:1px solid #ffffff20;border-radius:24px;padding:23px;text-align:center;box-shadow:0 20px 80px #0008}
+.dialog .emoji{font-size:47px}
+.dialog h2{margin:9px 0;font-size:22px}
+.dialog p{color:#c0cce3;line-height:1.8;font-size:14px;margin:8px 0 15px}
+.dialog button{width:100%;padding:12px;border-radius:13px;margin-top:7px;color:white;background:#477cff;font-weight:800}
+.dialog button.secondary{background:#ffffff13;border:1px solid #ffffff15}
+.toast{position:fixed;top:calc(env(safe-area-inset-top) + 58px);left:50%;transform:translateX(-50%);background:#263957;color:white;padding:10px 16px;border-radius:12px;border:1px solid #ffffff25;box-shadow:0 8px 30px #0005;font-size:13px;z-index:20;white-space:nowrap;display:none}
+.toast.show{display:block}
+@media(max-height:650px){
+.top{height:39px}
+.brand{font-size:15px}
+.stat{padding:4px}
+.stat strong{font-size:16px}
+.collection{padding:6px}
+.slot{height:32px;font-size:18px}
+.actions{padding:5px 0 3px}
+.action{padding:8px 3px}
+.hint{top:6px;font-size:11px}
+}
+</style>
+</head>
+<body>
+<div class="game">
+<header class="top">
+<button class="icon" id="backBtn" aria-label="العودة">↩ رجوع</button>
+<div class="brand">CUBE <span>MASTER</span> 3D</div>
+<button class="icon" id="pauseBtn">Ⅱ إيقاف</button>
+</header>
+
+<section class="stats">
+<div class="stat"><small>المرحلة</small><strong id="level">1</strong></div>
+<div class="stat"><small>النقاط</small><strong id="score">0</strong></div>
+<div class="stat"><small>الوقت</small><strong id="time">120</strong></div>
+</section>
+
+<div class="progress"><div id="timeBar"></div></div>
+
+<main class="scene" id="scene">
+<canvas id="world"></canvas>
+<div class="hint">اسحب بإصبعك لتدوير المجسم 360° • اضغط على مكعب ظاهر</div>
+<div class="level-tag" id="remaining">المكعبات المتبقية: 0</div>
+</main>
+
+<section class="collection">
+<div class="collection-head">
+<strong>🧩 خانات التجميع</strong>
+<span id="slotCount">0 / 7</span>
+</div>
+<div class="slots" id="slots"></div>
+</section>
+
+<footer class="actions">
+<button class="action" id="shuffleBtn">🔀 خلط الرموز</button>
+<button class="action primary" id="hintBtn">💡 تلميح</button>
+<button class="action" id="restartBtn">↻ إعادة اللعب</button>
+</footer>
+</div>
+
+<div class="overlay show" id="overlay">
+<div class="dialog">
+<div class="emoji" id="dialogEmoji">🧊</div>
+<h2 id="dialogTitle">مرحبًا بك في Cube Master 3D</h2>
+<p id="dialogText">دوّر الكتلة من جميع الجهات، واختر ثلاثة مكعبات تحمل الرمز نفسه. تجنّب امتلاء خانات التجميع السبع.</p>
+<button id="startBtn">ابدأ اللعب</button>
+<button class="secondary" id="secondaryBtn" hidden>إغلاق</button>
+</div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script type="module">
+import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js";
+
+const $ = id => document.getElementById(id);
+
+const symbols = ["🍎","🍋","🍇","🍒","🍊","🥝","🍓","🍍","🍉","🥥","🧁","⭐"];
+const colors = [0xff657a,0xffce55,0xb18aff,0xff789f,0xffa64d,0x65d6a0,0xff719e,0xffd86b,0x64c9ff,0xc99c75,0xff8fd2,0xf8f9ff];
+
+let renderer;
+let camera;
+let scene;
+let cubeGroup;
+let raycaster;
+let tiles = [];
+let collected = [];
+let score = 0;
+let level = 1;
+let timeLeft = 120;
+let timer = null;
+let playing = false;
+let paused = false;
+let pointer = null;
+let moved = false;
+let materialCache = new Map();
+let toastTimer = null;
+
+function shuffle(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+}
+
+function showToast(message) {
+    const toast = $("toast");
+    toast.textContent = message;
+    toast.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toast.classList.remove("show"), 1800);
+}
+
+function showDialog(emoji, title, message, buttonText, secondary = false) {
+    $("dialogEmoji").textContent = emoji;
+    $("dialogTitle").textContent = title;
+    $("dialogText").textContent = message;
+    $("startBtn").textContent = buttonText;
+    $("secondaryBtn").hidden = !secondary;
+    $("overlay").classList.add("show");
+}
+
+function materialFor(index) {
+    if (!materialCache.has(index)) {
+        materialCache.set(index, new THREE.MeshStandardMaterial({
+            color: colors[index],
+            roughness: 0.34,
+            metalness: 0.06
+        }));
+    }
+    return materialCache.get(index);
+}
+
+function init3D() {
+    renderer = new THREE.WebGLRenderer({
+        canvas: $("world"),
+        antialias: true,
+        alpha: true
+    });
+
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
+
+    scene = new THREE.Scene();
+
+    camera = new THREE.PerspectiveCamera(38, 1, 0.1, 100);
+    camera.position.set(7, 5.5, 9);
+
+    scene.add(new THREE.HemisphereLight(0xdceaff, 0x26314c, 2.1));
+
+    const mainLight = new THREE.DirectionalLight(0xffffff, 3.1);
+    mainLight.position.set(6, 9, 7);
+    scene.add(mainLight);
+
+    const fillLight = new THREE.DirectionalLight(0x809cff, 1.5);
+    fillLight.position.set(-6, 3, -5);
+    scene.add(fillLight);
+
+    const floor = new THREE.Mesh(
+        new THREE.CircleGeometry(7, 64),
+        new THREE.MeshBasicMaterial({
+            color: 0x283c60,
+            transparent: true,
+            opacity: 0.22
+        })
+    );
+
+    floor.rotation.x = -Math.PI / 2;
+    floor.position.y = -3;
+    scene.add(floor);
+
+    cubeGroup = new THREE.Group();
+    scene.add(cubeGroup);
+
+    raycaster = new THREE.Raycaster();
+
+    const resize = () => {
+        const width = $("scene").clientWidth;
+        const height = $("scene").clientHeight;
+
+        if (!width || !height) return;
+
+        renderer.setSize(width, height, false);
+        camera.aspect = width / height;
+        camera.updateProjectionMatrix();
+    };
+
+    new ResizeObserver(resize).observe($("scene"));
+    window.addEventListener("orientationchange", resize);
+    resize();
+
+    function animate() {
+        requestAnimationFrame(animate);
+        renderer.render(scene, camera);
+    }
+
+    animate();
+}
+
+function makeLabelTexture(symbol) {
+    const canvas = document.createElement("canvas");
+    canvas.width = 128;
+    canvas.height = 128;
+
+    const ctx = canvas.getContext("2d");
+    ctx.clearRect(0, 0, 128, 128);
+    ctx.font = "76px system-ui, sans-serif";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText(symbol, 64, 66);
+
+    const texture = new THREE.CanvasTexture(canvas);
+    texture.colorSpace = THREE.SRGBColorSpace;
+    return texture;
+}
+
+function addFaces(tile, symbolIndex) {
+    const texture = makeLabelTexture(symbols[symbolIndex]);
+
+    const material = new THREE.MeshBasicMaterial({
+        map: texture,
+        transparent: true,
+        side: THREE.DoubleSide,
+        depthWrite: false
+    });
+
+    const geometry = new THREE.PlaneGeometry(0.66, 0.66);
+
+    const faces = [
+        { p: [0, 0, 0.466], r: [0, 0, 0] },
+        { p: [0, 0, -0.466], r: [0, Math.PI, 0] },
+        { p: [0.466, 0, 0], r: [0, Math.PI / 2, 0] },
+        { p: [-0.466, 0, 0], r: [0, -Math.PI / 2, 0] },
+        { p: [0, 0.466, 0], r: [-Math.PI / 2, 0, 0] },
+        { p: [0, -0.466, 0], r: [Math.PI / 2, 0, 0] }
+    ];
+
+    tile.userData.faceMaterial = material;
+    tile.userData.faceGeometry = geometry;
+    tile.userData.faceTexture = texture;
+
+    for (const face of faces) {
+        const label = new THREE.Mesh(geometry, material);
+        label.position.set(...face.p);
+        label.rotation.set(...face.r);
+        label.userData.tile = tile;
+        tile.add(label);
+    }
+}
+
+function createTile(symbolIndex, position, id) {
+    const tile = new THREE.Group();
+
+    tile.position.copy(position);
+    tile.userData.id = id;
+    tile.userData.symbolIndex = symbolIndex;
+    tile.userData.removed = false;
+
+    const body = new THREE.Mesh(
+        new THREE.BoxGeometry(0.92, 0.92, 0.92),
+        materialFor(symbolIndex)
+    );
+
+    body.userData.tile = tile;
+    tile.add(body);
+
+    const edges = new THREE.LineSegments(
+        new THREE.EdgesGeometry(new THREE.BoxGeometry(0.93, 0.93, 0.93)),
+        new THREE.LineBasicMaterial({
+            color: 0xffffff,
+            transparent: true,
+            opacity: 0.48
+        })
+    );
+
+    edges.userData.tile = tile;
+    tile.add(edges);
+
+    addFaces(tile, symbolIndex);
+    cubeGroup.add(tile);
+    tiles.push(tile);
+}
+
+function clearTiles() {
+    for (const tile of tiles) {
+        cubeGroup.remove(tile);
+
+        if (tile.userData.faceTexture) {
+            tile.userData.faceTexture.dispose();
+        }
+    }
+
+    tiles = [];
+}
+
+function dimensionsForLevel() {
+    if (level === 1) return [3, 3, 3];
+    if (level === 2) return [4, 3, 3];
+    if (level === 3) return [4, 4, 3];
+    if (level === 4) return [4, 4, 6];
+    if (level <= 6) return [5, 4, 6];
+    return [5, 5, 6];
+}
+
+function buildLevel() {
+    clearTiles();
+    collected = [];
+
+    const [sx, sy, sz] = dimensionsForLevel();
+    const coords = [];
+
+    for (let x = 0; x < sx; x++) {
+        for (let y = 0; y < sy; y++) {
+            for (let z = 0; z < sz; z++) {
+                coords.push(new THREE.Vector3(
+                    (x - (sx - 1) / 2) * 0.96,
+                    (y - (sy - 1) / 2) * 0.96,
+                    (z - (sz - 1) / 2) * 0.96
+                ));
+            }
+        }
+    }
+
+    const usableCount = Math.floor(coords.length / 3) * 3;
+    coords.length = usableCount;
+
+    const symbolPool = [];
+
+    for (let i = 0; i < usableCount / 3; i++) {
+        const symbol = i % symbols.length;
+        symbolPool.push(symbol, symbol, symbol);
+    }
+
+    shuffle(symbolPool);
+    shuffle(coords);
+
+    coords.forEach((position, index) => {
+        createTile(symbolPool[index], position, index);
+    });
+
+    const maxDimension = Math.max(sx, sy, sz);
+    const distance = maxDimension * 1.5 + 3.4;
+
+    camera.position.set(distance * 0.74, distance * 0.59, distance);
+    camera.lookAt(0, 0, 0);
+
+    cubeGroup.rotation.set(-0.24, 0.42, 0);
+
+    updateUI();
+}
+
+function updateUI() {
+    $("level").textContent = level;
+    $("score").textContent = score;
+    $("time").textContent = timeLeft;
+    $("timeBar").style.width = Math.max(0, timeLeft / 120 * 100) + "%";
+    $("remaining").textContent = "المكعبات المتبقية: " + tiles.length;
+    $("slotCount").textContent = collected.length + " / 7";
+
+    const slots = $("slots");
+    slots.innerHTML = "";
+
+    for (let i = 0; i < 7; i++) {
+        const slot = document.createElement("div");
+        slot.className = "slot";
+
+        if (collected[i] !== undefined) {
+            slot.classList.add("filled");
+            slot.textContent = symbols[collected[i]];
+        }
+
+        slots.appendChild(slot);
+    }
+}
+
+function removeTile(tile) {
+    tile.userData.removed = true;
+    cubeGroup.remove(tile);
+    tiles = tiles.filter(item => item !== tile);
+
+    if (tile.userData.faceTexture) {
+        tile.userData.faceTexture.dispose();
+    }
+}
+
+function checkMatches() {
+    const counts = new Map();
+
+    for (const symbol of collected) {
+        counts.set(symbol, (counts.get(symbol) || 0) + 1);
+    }
+
+    for (const [symbol, count] of counts) {
+        if (count >= 3) {
+            let removed = 0;
+
+            collected = collected.filter(value => {
+                if (value === symbol && removed < 3) {
+                    removed++;
+                    return false;
+                }
+                return true;
+            });
+
+            score += 30 * level;
+            showToast("رائع! حصلت على " + 30 * level + " نقطة");
+            return true;
+        }
+    }
+
+    return false;
+}
+
+function finishLevel() {
+    playing = false;
+    clearInterval(timer);
+
+    showDialog(
+        "🏆",
+        "أكملت المرحلة!",
+        "أحسنت! استعد للمرحلة " + (level + 1) + ".",
+        "المرحلة التالية"
+    );
+}
+
+function loseGame(reason) {
+    playing = false;
+    clearInterval(timer);
+
+    showDialog(
+        "💔",
+        "انتهت اللعبة",
+        reason || "حاول مرة أخرى، وانتبه إلى خانات التجميع.",
+        "إعادة اللعب"
+    );
+}
+
+function selectTile(tile) {
+    if (!playing || paused || !tile || tile.userData.removed) return;
+
+    if (collected.length >= 7) return;
+
+    const symbol = tile.userData.symbolIndex;
+
+    removeTile(tile);
+    collected.push(symbol);
+
+    checkMatches();
+    updateUI();
+
+    if (tiles.length === 0) {
+        finishLevel();
+        return;
+    }
+
+    if (collected.length >= 7) {
+        loseGame("امتلأت خانات التجميع السبع. أعد اللعب وحاول اختيار المجموعات المتطابقة.");
+    }
+}
+
+function getTileAt(event) {
+    const rect = $("world").getBoundingClientRect();
+
+    const position = new THREE.Vector2(
+        ((event.clientX - rect.left) / rect.width) * 2 - 1,
+        -((event.clientY - rect.top) / rect.height) * 2 + 1
+    );
+
+    raycaster.setFromCamera(position, camera);
+
+    const objects = [];
+
+    for (const tile of cubeGroup.children) {
+        tile.traverse(object => {
+            if (object.isMesh) objects.push(object);
+        });
+    }
+
+    const hits = raycaster.intersectObjects(objects, false);
+
+    for (const hit of hits) {
+        let object = hit.object;
+
+        while (object && !object.userData.tile) {
+            object = object.parent;
+        }
+
+        if (object && object.userData.tile) {
+            const tile = object.userData.tile;
+
+            if (!tile.userData.removed) return tile;
+        }
+    }
+
+    return null;
+}
+
+function startTimer() {
+    clearInterval(timer);
+
+    timer = setInterval(() => {
+        if (!playing || paused) return;
+
+        timeLeft--;
+        updateUI();
+
+        if (timeLeft <= 0) {
+            loseGame("انتهى الوقت! حاول إنهاء المرحلة بسرعة أكبر.");
+        }
+    }, 1000);
+}
+
+function startGame() {
+    $("overlay").classList.remove("show");
+
+    playing = true;
+    paused = false;
+    timeLeft = 120;
+
+    $("pauseBtn").textContent = "Ⅱ إيقاف";
+
+    buildLevel();
+    startTimer();
+}
+
+function restart() {
+    clearInterval(timer);
+
+    playing = false;
+    paused = false;
+    level = 1;
+    score = 0;
+    timeLeft = 120;
+
+    startGame();
+}
+
+function hint() {
+    if (!playing || paused) return;
+
+    const counts = new Map();
+
+    for (const tile of tiles) {
+        const symbol = tile.userData.symbolIndex;
+        counts.set(symbol, (counts.get(symbol) || 0) + 1);
+    }
+
+    const candidate = tiles.find(tile =>
+        counts.get(tile.userData.symbolIndex) >= 3
+    );
+
+    if (!candidate) {
+        showToast("حاول تدوير المجسم للبحث عن رموز متطابقة");
+        return;
+    }
+
+    candidate.scale.setScalar(1.18);
+
+    setTimeout(() => {
+        if (!candidate.userData.removed) {
+            candidate.scale.setScalar(1);
+        }
+    }, 800);
+}
+
+function shuffleRemaining() {
+    if (!playing || paused) return;
+
+    const pool = tiles.map(tile => tile.userData.symbolIndex);
+    shuffle(pool);
+
+    for (let i = 0; i < tiles.length; i++) {
+        const tile = tiles[i];
+        const symbolIndex = pool[i];
+
+        if (tile.userData.faceTexture) {
+            tile.userData.faceTexture.dispose();
+        }
+
+        tile.userData.symbolIndex = symbolIndex;
+
+        const body = tile.children[0];
+        body.material = materialFor(symbolIndex);
+
+        const oldLabels = tile.children.filter(child =>
+            child.isMesh && child !== body
+        );
+
+        oldLabels.forEach(label => {
+            tile.remove(label);
+        });
+
+        addFaces(tile, symbolIndex);
+    }
+
+    showToast("تم خلط الرموز");
+}
+
+$("world").addEventListener("pointerdown", event => {
+    if (!playing || paused) return;
+
+    pointer = {
+        x: event.clientX,
+        y: event.clientY,
+        rotationX: cubeGroup.rotation.x,
+        rotationY: cubeGroup.rotation.y
+    };
+
+    moved = false;
+
+    try {
+        $("world").setPointerCapture(event.pointerId);
+    } catch {}
+});
+
+$("world").addEventListener("pointermove", event => {
+    if (!pointer || !playing || paused) return;
+
+    const dx = event.clientX - pointer.x;
+    const dy = event.clientY - pointer.y;
+
+    if (Math.abs(dx) + Math.abs(dy) > 5) {
+        moved = true;
+    }
+
+    if (moved) {
+        cubeGroup.rotation.y = pointer.rotationY + dx * 0.009;
+        cubeGroup.rotation.x = pointer.rotationX + dy * 0.009;
+    }
+});
+
+$("world").addEventListener("pointerup", event => {
+    if (!pointer) return;
+
+    const wasMoved = moved;
+    pointer = null;
+
+    if (!wasMoved) {
+        selectTile(getTileAt(event));
+    }
+});
+
+$("world").addEventListener("pointercancel", () => {
+    pointer = null;
+});
+
+$("startBtn").addEventListener("click", () => {
+    if (playing && paused && tiles.length > 0) {
+        paused = false;
+        $("overlay").classList.remove("show");
+        $("pauseBtn").textContent = "Ⅱ إيقاف";
+        return;
+    }
+
+    if (!playing && tiles.length === 0 && level > 1) {
+        startGame();
+        return;
+    }
+
+    if (!playing) {
+        startGame();
+    }
+});
+
+$("secondaryBtn").addEventListener("click", () => {
+    $("overlay").classList.remove("show");
+});
+
+$("pauseBtn").addEventListener("click", () => {
+    if (!playing) return;
+
+    paused = !paused;
+
+    if (paused) {
+        $("pauseBtn").textContent = "▶ متابعة";
+
+        showDialog(
+            "⏸️",
+            "اللعبة متوقفة",
+            "يمكنك المتابعة عندما تكون مستعدًا.",
+            "متابعة"
+        );
+    } else {
+        $("overlay").classList.remove("show");
+        $("pauseBtn").textContent = "Ⅱ إيقاف";
+    }
+});
+
+$("restartBtn").addEventListener("click", restart);
+$("hintBtn").addEventListener("click", hint);
+$("shuffleBtn").addEventListener("click", shuffleRemaining);
+
+$("backBtn").addEventListener("click", () => {
+    clearInterval(timer);
+    playing = false;
+    location.href = "./index.html";
+});
+
+init3D();
+buildLevel();
+updateUI();
+</script>
+</body>
+  </html>
