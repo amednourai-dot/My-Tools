@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#101629">
+<title>Cube Master 3D | Ahmed Tools</title>
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{color-scheme:dark}
+body{margin:0;background:radial-gradient(circle at 50% 20%,#253454,#101629 65%);color:#fff;font-family:system-ui,sans-serif;overflow:hidden;touch-action:pan-y}
+button{font:inherit;border:0;cursor:pointer;touch-action:manipulation}
+.game{height:100dvh;max-width:600px;margin:auto;display:flex;flex-direction:column;padding:env(safe-area-inset-top) 14px env(safe-area-inset-bottom);overflow:hidden}
+.top{height:58px;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-shrink:0}
+.brand{font-weight:900;font-size:18px;letter-spacing:.3px}
+.brand span{color:#60e8ff}
+.icon{background:#ffffff13;color:white;border:1px solid #ffffff20;border-radius:13px;padding:9px 12px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;flex-shrink:0}
+.stat{background:#ffffff0d;border:1px solid #ffffff15;border-radius:15px;padding:9px 5px;text-align:center}
+.stat small{display:block;color:#aebbd5;font-size:11px}
+.stat strong{display:block;font-size:19px;margin-top:2px}
+.progress{height:5px;background:#ffffff18;border-radius:20px;margin-top:10px;overflow:hidden;flex-shrink:0}
+.progress div{height:100%;width:100%;background:linear-gradient(90deg,#50e3ff,#9c7bff);transition:width .3s}
+.scene{position:relative;flex:1;min-height:0;margin:8px -5px;overflow:hidden;border-radius:24px}
+#world{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none}
+.hint{position:absolute;top:12px;left:0;right:0;text-align:center;font-size:12px;color:#c8d6f2;pointer-events:none;text-shadow:0 2px 6px #000}
+.level-tag{position:absolute;bottom:12px;left:12px;background:#101629a8;border:1px solid #ffffff20;border-radius:12px;padding:7px 10px;font-size:12px;pointer-events:none}
+.collection{flex-shrink:0;background:#ffffff0c;border:1px solid #ffffff18;border-radius:19px;padding:10px}
+.collection-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;font-size:13px}
+.collection-head span:last-child{color:#aab8d2}
+.slots{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}
+.slot{height:43px;display:flex;align-items:center;justify-content:center;background:#050b18a8;border:1px dashed #ffffff25;border-radius:11px;font-size:22px}
+.slot.filled{border-style:solid;border-color:#ffffff25;background:#ffffff12;animation:pop .18s ease}
+@keyframes pop{50%{transform:scale(1.12)}}
+.actions{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;padding:10px 0 6px;flex-shrink:0}
+.action{border-radius:14px;padding:11px 5px;color:white;background:#ffffff13;border:1px solid #ffffff15;font-size:13px;font-weight:700}
+.action.primary{background:linear-gradient(135deg,#477cff,#795bff)}
+.action:disabled{opacity:.35}
+.overlay{position:fixed;inset:0;background:#070b16d9;backdrop-filter:blur(9px);display:none;align-items:center;justify-content:center;padding:22px;z-index:10}
+.overlay.show{display:flex}
+.dialog{width:100%;max-width:340px;background:#18233b;border:1px solid #ffffff20;border-radius:25px;padding:25px;text-align:center;box-shadow:0 20px 80px #0008}
+.dialog .emoji{font-size:48px}
+.dialog h2{margin:10px 0}
+.dialog p{color:#c0cce3;line-height:1.8;font-size:14px}
+.dialog button{width:100%;padding:13px;border-radius:14px;margin-top:8px;color:white;background:#477cff;font-weight:800}
+.dialog button.secondary{background:#ffffff13}
+@media(max-height:650px){
+.top{height:45px}
+.stat{padding:5px}
+.stat strong{font-size:16px}
+.collection{padding:7px}
+.slot{height:34px;font-size:19px}
+.actions{padding:6px 0}
+.action{padding:9px 4px}
+}
+</style>
+</head>
+<body>
+<div class="game">
+<header class="top">
+<button class="icon" id="backBtn" aria-label="العودة">↩</button>
+<div class="brand">CUBE <span>MASTER</span> 3D</div>
+<button class="icon" id="pauseBtn">Ⅱ إيقاف</button>
+</header>
+
+<section class="stats">
+<div class="stat"><small>المرحلة</small><strong id="level">1</strong></div>
+<div class="stat"><small>النقاط</small><strong id="score">0</strong></div>
+<div class="stat"><small>الوقت</small><strong id="time">120</strong></div>
+</section>
+
+<div class="progress"><div id="timeBar"></div></div>
+
+<main class="scene" id="scene">
+<canvas id="world"></canvas>
+<div class="hint">اسحب لتدوير المجسم • اجمع 3 رموز متطابقة</div>
+<div class="level-tag" id="remaining">المكعبات المتبقية: 0</div>
+</main>
+
+<section class="collection">
+<div class="collection-head">
+<strong>🧩 مجموعة المكعبات</strong>
+<span id="slotCount">0 / 7</span>
+</div>
+<div class="slots" id="slots"></div>
+</section>
+
+<footer class="actions">
+<button class="action" id="shuffleBtn">🔀 خلط</button>
+<button class="action primary" id="hintBtn">💡 تلميح</button>
+<button class="action" id="restartBtn">↻ إعادة</button>
+</footer>
+</div>
+
+<div class="overlay show" id="overlay">
+<div class="dialog">
+<div class="emoji" id="dialogEmoji">🧊</div>
+<h2 id="dialogTitle">مستعد للتحدي؟</h2>
+<p id="dialogText">دوّر المجسم وابحث عن ثلاثة مكعبات تحمل الرمز نفسه. لا تدع خانات التجميع تمتلئ!</p>
+<button id="startBtn">ابدأ اللعب</button>
+<button class="secondary" id="closeBtn" hidden>متابعة</button>
+</div>
+</div>
+
+<script type="module">
+import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js";
+
+const $=id=>document.getElementById(id);
+const canvas=$("world");
+const sceneElement=$("scene");
+const symbols=["🍎","🍋","🍇","🍒","🍊","🥝","🍓","🍍","🍉","🥥","🧁","⭐"];
+const palette=[0xff657a,0xffce55,0xb18aff,0xff789f,0xffa64d,0x65d6a0,0xff719e,0xffd86b,0x64c9ff,0xc99c75,0xff8fd2,0xf8f9ff];
+
+let renderer,camera,world,raycaster;
+let tiles=[];
+let selected=[];
+let score=0;
+let level=1;
+let timeLeft=120;
+let timer=null;
+let playing=false;
+let paused=false;
+let down=null;
+let dragMoved=false;
+let lastTap=0;
+let currentSeed=0;
+
+const materialCache=new Map();
+
+function makeMaterial(color){
+if(!materialCache.has(color)){
+materialCache.set(color,new THREE.MeshStandardMaterial({
+color,
+roughness:.36,
+metalness:.12,
+emissive:color,
+emissiveIntensity:.055
+}));
+}
+return materialCache.get(color);
+}
+
+function init3D(){
+renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true});
+renderer.setPixelRatio(Math.min(devicePixelRatio||1,1.7));
+renderer.outputColorSpace=THREE.SRGBColorSpace;
+renderer.setClearColor(0x000000,0);
+
+world=new THREE.Scene();
+world.fog=new THREE.Fog(0x17233c,13,28);
+
+camera=new THREE.PerspectiveCamera(37,1,.1,100);
+camera.position.set(6,5.2,8);
+camera.lookAt(0,0,0);
+
+world.add(new THREE.HemisphereLight(0xbddaff,0x28304b,2));
+
+const light=new THREE.DirectionalLight(0xffffff,3.2);
+light.position.set(5,8,6);
+world.add(light);
+
+const fill=new THREE.DirectionalLight(0x728aff,1.7);
+fill.position.set(-6,3,-5);
+world.add(fill);
+
+const floor=new THREE.Mesh(
+new THREE.CircleGeometry(5.5,64),
+new THREE.MeshBasicMaterial({color:0x263652,transparent:true,opacity:.32})
+);
+floor.rotation.x=-Math.PI/2;
+floor.position.y=-2.25;
+world.add(floor);
+
+raycaster=new THREE.Raycaster();
+
+const resize=()=>{
+const w=sceneElement.clientWidth;
+const h=sceneElement.clientHeight;
+if(!w||!h)return;
+renderer.setSize(w,h,false);
+camera.aspect=w/h;
+camera.position.set(6,5.2,8);
+camera.lookAt(0,0,0);
+camera.updateProjectionMatrix();
+};
+new ResizeObserver(resize).observe(sceneElement);
+resize();
+
+function animate(){
+requestAnimationFrame(animate);
+if(world){
+world.rotation.y+=playing&&!paused?.00045:0;
+renderer.render(world,camera);
+}
+}
+animate();
+}
+
+function createTile(symbolIndex,position,id){
+const group=new THREE.Group();
+group.position.copy(position);
+group.userData={id,symbolIndex,removed:false};
+
+const body=new THREE.Mesh(
+new THREE.BoxGeometry(.91,.91,.91),
+makeMaterial(palette[symbolIndex])
+);
+body.castShadow=true;
+body.receiveShadow=true;
+group.add(body);
+
+const edges=new THREE.LineSegments(
+new THREE.EdgesGeometry(new THREE.BoxGeometry(.915,.915,.915)),
+new THREE.LineBasicMaterial({color:0xffffff,transparent:true,opacity:.55})
+);
+group.add(edges);
+
+const labelCanvas=document.createElement("canvas");
+labelCanvas.width=128;
+labelCanvas.height=128;
+const ctx=labelCanvas.getContext("2d");
+ctx.fillStyle="#ffffff";
+ctx.font="76px system-ui, sans-serif";
+ctx.textAlign="center";
+ctx.textBaseline="middle";
+ctx.fillText(symbols[symbolIndex],64,67);
+
+const texture=new THREE.CanvasTexture(labelCanvas);
+texture.colorSpace=THREE.SRGBColorSpace;
+
+const labelMaterial=new THREE.MeshBasicMaterial({
+map:texture,
+transparent:true,
+side:THREE.DoubleSide,
+depthWrite:false
+});
+
+const label=new THREE.Mesh(new THREE.PlaneGeometry(.67,.67),labelMaterial);
+label.position.z=.461;
+group.add(label);
+
+const backLabel=label.clone();
+backLabel.position.z=-.461;
+backLabel.rotation.y=Math.PI;
+group.add(backLabel);
+
+const sideLabel=label.clone();
+sideLabel.position.set(.461,0,0);
+sideLabel.rotation.y=Math.PI/2;
+group.add(sideLabel);
+
+const sideLabel2=label.clone();
+sideLabel2.position.set(-.461,0,0);
+sideLabel2.rotation.y=-Math.PI/2;
+group.add(sideLabel2);
+
+const topLabel=label.clone();
+topLabel.position.set(0,.461,0);
+topLabel.rotation.x=-Math.PI/2;
+group.add(topLabel);
+
+const bottomLabel=label.clone();
+bottomLabel.position.set(0,-.461,0);
+bottomLabel.rotation.x=Math.PI/2;
+group.add(bottomLabel);
+
+group.traverse(object=>{
+if(object.isMesh)object.userData.tile=group;
+});
+
+world.add(group);
+tiles.push(group);
+return group;
+}
+
+function shuffle(array){
+for(let i=array.length-1;i>0;i--){
+const j=Math.floor(Math.random()*(i+1));
+[array[i],array[j]]=[array[j],array[i]];
+}
+return array;
+}
+
+function buildLevel(){
+for(const tile of tiles){
+world.remove(tile);
+tile.traverse(obj=>{
+if(obj.isMesh){
+obj.geometry.dispose();
+if(obj.material.map)obj.material.map.dispose();
+}
+});
+}
+tiles=[];
+selected=[];
+currentSeed++;
+
+const size=level===1?3:Math.min(4+Math.floor((level-2)/2),5);
+const coords=[];
+const start=-(size-1)/2;
+
+for(let x=0;x<size;x++){
+for(let y=0;y<size;y++){
+for(let z=0;z<size;z++){
+if(level===1&&x===1&&y===1&&z===1)continue;
+coords.push(new THREE.Vector3((x+start)*.98,(y+start)*.98,(z+start)*.98));
+}
+}
+}
+
+shuffle(coords);
+
+const symbolPool=[];
+const count=Math.floor(coords.length/3);
+for(let i=0;i<count;i++){
+symbolPool.push(i%symbols.length,i%symbols.length,i%symbols.length);
+}
+while(symbolPool.length<coords.length){
+symbolPool.push(Math.floor(Math.random()*symbols.length));
+}
+shuffle(symbolPool);
+
+coords.forEach((position,index)=>{
+createTile(symbolPool[index],position,index);
+});
+
+updateUI();
+}
+
+function updateUI(){
+$("level").textContent=level;
+$("score").textContent=score;
+$("time").textContent=timeLeft;
+$("timeBar").style.width=Math.max(0,timeLeft/120*100)+"%";
+$("remaining").textContent="المكعبات المتبقية: "+tiles.length;
+$("slotCount").textContent=selected.length+" / 7";
+
+const slots=$("slots");
+slots.innerHTML="";
+for(let i=0;i<7;i++){
+const slot=document.createElement("div");
+slot.className="slot"+(selected[i]?" filled":"");
+slot.textContent=selected[i]?symbols[selected[i].userData.symbolIndex]:"";
+slots.appendChild(slot);
+}
+}
+
+function removeTile(tile){
+world.remove(tile);
+tile.userData.removed=true;
+tiles=tiles.filter(item=>item!==tile);
+}
+
+function chooseTile(tile){
+if(!playing||paused||!tile||tile.userData.removed)return;
+if(selected.includes(tile))return;
+
+selected.push(tile);
+tile.scale.setScalar(.78);
+tile.position.y+=.18;
+
+const symbol=tile.userData.symbolIndex;
+const matches=selected.filter(item=>item.userData.symbolIndex===symbol);
+
+if(matches.length===3){
+selected=selected.filter(item=>item.userData.symbolIndex!==symbol);
+matches.forEach(removeTile);
+score+=30*level;
+}
+
+updateUI();
+
+if(tiles.length===0){
+level++;
+timeLeft=Math.min(120,100+level*5);
+showDialog("🏆","أحسنت!","أكملت المرحلة بنجاح. استعد لتحدٍ أصعب!", "المرحلة التالية");
+return;
+}
+
+if(selected.length>=7){
+endGame(false);
+}
+}
+
+function pointTile(event){
+const rect=canvas.getBoundingClientRect();
+const pointer=new THREE.Vector2(
+((event.clientX-rect.left)/rect.width)*2-1,
+-((event.clientY-rect.top)/rect.height)*2+1
+);
+raycaster.setFromCamera(pointer,camera);
+const objects=[];
+for(const tile of tiles){
+tile.traverse(obj=>{
+if(obj.isMesh)objects.push(obj);
+});
+}
+const hits=raycaster.intersectObjects(objects,false);
+if(!hits.length)return null;
+return hits[0].object.userData.tile||null;
+}
+
+function showDialog(emoji,title,text,buttonText){
+$("dialogEmoji").textContent=emoji;
+$("dialogTitle").textContent=title;
+$("dialogText").textContent=text;
+$("startBtn").textContent=buttonText;
+$("closeBtn").hidden=true;
+$("overlay").classList.add("show");
+}
+
+function startTimer(){
+clearInterval(timer);
+timer=setInterval(()=>{
+if(!playing||paused)return;
+timeLeft--;
+updateUI();
+if(timeLeft<=0)endGame(false);
+},1000);
+}
+
+function startGame(){
+$("overlay").classList.remove("show");
+playing=true;
+paused=false;
+$("pauseBtn").textContent="Ⅱ إيقاف";
+buildLevel();
+startTimer();
+}
+
+function endGame(won){
+playing=false;
+clearInterval(timer);
+showDialog(
+won?"🏆":"💔",
+won?"فوز رائع!":"انتهى التحدي",
+won?"لقد أتممت المرحلة!":"حاول مرة أخرى، وراقب خانات التجميع والوقت.",
+"العب مجددًا"
+);
+}
+
+function restart(){
+clearInterval(timer);
+level=1;
+score=0;
+timeLeft=120;
+selected=[];
+startGame();
+}
+
+function hint(){
+if(!playing||paused)return;
+const counts=new Map();
+for(const tile of tiles){
+const id=tile.userData.symbolIndex;
+counts.set(id,(counts.get(id)||0)+1);
+}
+const match=[...counts.entries()].find(entry=>entry[1]>=3);
+if(!match){
+showDialog("💡","لا يوجد تلميح","دوّر المجسم وابحث عن الرموز المتشابهة.","حسنًا");
+return;
+}
+const target=tiles.find(tile=>tile.userData.symbolIndex===match[0]);
+if(target){
+target.scale.setScalar(1.15);
+setTimeout(()=>{
+if(!target.userData.removed)target.scale.setScalar(.91);
+},650);
+}
+}
+
+function shuffleRemaining(){
+if(!playing||paused)return;
+const remaining=tiles.map(tile=>tile.userData.symbolIndex);
+shuffle(remaining);
+tiles.forEach((tile,index)=>{
+tile.userData.symbolIndex=remaining[index];
+const color=palette[remaining[index]];
+tile.children[0].material=makeMaterial(color);
+});
+}
+
+canvas.addEventListener("pointerdown",event=>{
+down={x:event.clientX,y:event.clientY,rx:world.rotation.x,ry:world.rotation.y};
+dragMoved=false;
+canvas.setPointerCapture(event.pointerId);
+});
+
+canvas.addEventListener("pointermove",event=>{
+if(!down||!playing||paused)return;
+const dx=event.clientX-down.x;
+const dy=event.clientY-down.y;
+if(Math.abs(dx)+Math.abs(dy)>6)dragMoved=true;
+if(dragMoved){
+world.rotation.y=down.ry+dx*.008;
+world.rotation.x=Math.max(-.9,Math.min(.9,down.rx+dy*.006));
+}
+});
+
+canvas.addEventListener("pointerup",event=>{
+if(!down)return;
+const wasDrag=dragMoved;
+down=null;
+if(wasDrag)return;
+const tile=pointTile(event);
+if(tile)chooseTile(tile);
+});
+
+canvas.addEventListener("pointercancel",()=>down=null);
+
+$("startBtn").addEventListener("click",()=>{
+if(level>1&&tiles.length===0){
+$("overlay").classList.remove("show");
+playing=true;
+paused=false;
+buildLevel();
+startTimer();
+}else{
+startGame();
+}
+});
+
+$("closeBtn").addEventListener("click",()=>{
+$("overlay").classList.remove("show");
+});
+
+$("pauseBtn").addEventListener("click",()=>{
+if(!playing)return;
+paused=!paused;
+$("pauseBtn").textContent=paused?"▶ متابعة":"Ⅱ إيقاف";
+if(paused){
+showDialog("⏸️","اللعبة متوقفة","خذ وقتك، ثم تابع التحدي.","متابعة");
+$("startBtn").onclick=()=>{
+$("overlay").classList.remove("show");
+paused=false;
+$("pauseBtn").textContent="Ⅱ إيقاف";
+$("startBtn").onclick=null;
+};
+}
+});
+
+$("restartBtn").addEventListener("click",restart);
+$("hintBtn").addEventListener("click",hint);
+$("shuffleBtn").addEventListener("click",shuffleRemaining);
+
+$("backBtn").addEventListener("click",()=>{
+if(confirm("هل تريد مغادرة اللعبة؟")){
+clearInterval(timer);
+playing=false;
+location.href="./index.html";
+}
+});
+
+function endGameUnused(){}
+
+init3D();
+buildLevel();
+updateUI();
+</script>
+</body>
+  </html>
