@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#0b1020">
+<title>Cube Master 3D | Ahmed Tools</title>
+<style>
+:root{
+--bg:#0b1020;
+--panel:#151d32;
+--panel2:#1c2740;
+--text:#f7f9ff;
+--muted:#9eabc8;
+--blue:#5c8dff;
+--cyan:#4de2e5;
+--green:#45e0a2;
+--red:#ff627d;
+--gold:#ffd166
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",sans-serif;touch-action:none;overscroll-behavior:none}
+button{font:inherit;border:0;cursor:pointer;color:var(--text);touch-action:manipulation}
+button:disabled{opacity:.4;cursor:not-allowed}
+.app{height:100dvh;height:100svh;max-width:700px;margin:auto;display:flex;flex-direction:column;padding:env(safe-area-inset-top) 12px env(safe-area-inset-bottom);gap:8px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:8px;padding-top:6px;flex-shrink:0}
+.brand{display:flex;align-items:center;gap:9px;min-width:0}
+.logo{width:40px;height:40px;border-radius:13px;background:linear-gradient(135deg,#618cff,#7a5cff);display:grid;place-items:center;font-size:23px;box-shadow:0 5px 20px #536dff44}
+.brand h1{font-size:16px;margin:0;white-space:nowrap}
+.brand p{font-size:10px;color:var(--muted);margin:3px 0 0}
+.top-actions{display:flex;gap:6px}
+.icon-btn{width:37px;height:37px;border-radius:12px;background:var(--panel2);font-size:17px}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;flex-shrink:0}
+.stat{min-width:0;background:var(--panel);border:1px solid #ffffff0d;border-radius:13px;text-align:center;padding:8px 3px}
+.stat small{display:block;color:var(--muted);font-size:10px;margin-bottom:3px}
+.stat strong{font-size:16px;font-variant-numeric:tabular-nums}
+.game-area{position:relative;flex:1;min-height:0;overflow:hidden;border-radius:21px;border:1px solid #ffffff12;background:radial-gradient(ellipse at 50% 40%,#263a65 0%,#131d35 48%,#0c1223 100%)}
+#game{width:100%;height:100%;display:block;touch-action:none;outline:none}
+.drag-hint{position:absolute;top:9px;left:0;right:0;text-align:center;color:#d4e0ff9c;font-size:11px;pointer-events:none;text-shadow:0 2px 5px #000}
+.message{position:absolute;bottom:10px;left:10px;right:10px;text-align:center;pointer-events:none;font-size:12px;color:#d6e3ff;min-height:18px;text-shadow:0 2px 4px #000}
+.overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:20px;background:#070b17c9;backdrop-filter:blur(8px);z-index:5}
+.overlay.hidden{display:none}
+.dialog{width:min(100%,330px);background:linear-gradient(145deg,#202d4b,#11192d);border:1px solid #ffffff20;border-radius:23px;padding:23px 18px;text-align:center;box-shadow:0 20px 60px #0008}
+.dialog .hero{font-size:54px;margin-bottom:5px}
+.dialog h2{font-size:23px;margin:5px 0 9px}
+.dialog p{color:#b5c4e5;font-size:13px;line-height:1.8;margin:0 0 17px}
+.primary{width:100%;border-radius:14px;padding:13px;background:linear-gradient(110deg,#477dff,#7659f5);font-weight:800;font-size:15px;box-shadow:0 5px 18px #4c70ff38}
+.secondary{width:100%;border-radius:12px;padding:10px;background:#ffffff0e;border:1px solid #ffffff16;margin-top:8px;font-size:13px}
+.bottom-panel{flex-shrink:0;background:var(--panel);border:1px solid #ffffff0c;border-radius:17px;padding:10px;display:flex;flex-direction:column;gap:8px}
+.slots-title{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:#dce5ff}
+.slots-title small{color:var(--muted);font-size:10px}
+.slots{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px}
+.slot{aspect-ratio:1;min-width:0;display:grid;place-items:center;background:#080e1c;border:1px solid #ffffff15;border-radius:9px;font-size:clamp(16px,5vw,25px);overflow:hidden}
+.slot.filled{background:linear-gradient(145deg,#34496d,#1b2942);border-color:#6d9dff77;box-shadow:inset 0 0 12px #638fff14}
+.slot.match{animation:matchpop .25s ease}
+@keyframes matchpop{50%{transform:scale(1.13);background:#2e8d76}}
+.controls{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+.control{min-width:0;padding:9px 2px;background:var(--panel2);border:1px solid #ffffff0d;border-radius:11px;font-size:11px;white-space:nowrap}
+.control span{display:block;font-size:17px;margin-bottom:3px}
+.control.primary-small{background:#2c4d8b}
+.progress{height:4px;background:#ffffff12;border-radius:10px;overflow:hidden}
+.progress div{height:100%;width:100%;background:linear-gradient(90deg,var(--cyan),var(--blue));transition:width .25s}
+@media(min-width:520px){
+.app{padding-left:18px;padding-right:18px;gap:10px}
+.brand h1{font-size:18px}
+.stat{padding:9px}
+.bottom-panel{padding:12px}
+}
+</style>
+</head>
+<body>
+<div class="app">
+<header class="top">
+<div class="brand">
+<div class="logo">🧊</div>
+<div>
+<h1>Cube Master 3D</h1>
+<p>تحدي المطابقة ثلاثي الأبعاد</p>
+</div>
+</div>
+<div class="top-actions">
+<button class="icon-btn" id="soundBtn" aria-label="الصوت">🔊</button>
+<button class="icon-btn" id="homeBtn" aria-label="الرئيسية">⌂</button>
+</div>
+</header>
+
+<section class="stats">
+<div class="stat"><small>المرحلة</small><strong id="levelValue">1</strong></div>
+<div class="stat"><small>النقاط</small><strong id="scoreValue">0</strong></div>
+<div class="stat"><small>الوقت</small><strong id="timeValue">150</strong></div>
+<div class="stat"><small>المتبقي</small><strong id="remainingValue">75</strong></div>
+</section>
+
+<main class="game-area">
+<canvas id="game"></canvas>
+<div class="drag-hint">اسحب لتدوير المكعبات بحرية ↻</div>
+<div class="message" id="message">المس مكعبًا مكشوفًا لبدء المطابقة</div>
+<div class="overlay" id="overlay">
+<div class="dialog">
+<div class="hero" id="dialogIcon">🧊</div>
+<h2 id="dialogTitle">Cube Master 3D</h2>
+<p id="dialogText">أزل المكعبات بمطابقة 3 رموز متشابهة. دوّر المجسم لاكتشاف المكعبات، ولا تدع الخانات السبع تمتلئ!</p>
+<button class="primary" id="startBtn">ابدأ اللعب</button>
+<button class="secondary" id="helpBtn">كيف تلعب؟</button>
+</div>
+</div>
+</main>
+
+<section class="bottom-panel">
+<div class="slots-title">
+<span>📦 خانات المطابقة</span>
+<small id="slotCount">0 / 7</small>
+</div>
+<div class="slots" id="slots"></div>
+<div class="progress"><div id="timeBar"></div></div>
+<div class="controls">
+<button class="control" id="hintBtn"><span>💡</span>تلميح</button>
+<button class="control" id="shuffleBtn"><span>🔀</span>خلط الرموز</button>
+<button class="control" id="undoBtn"><span>↩️</span>تراجع</button>
+<button class="control primary-small" id="pauseBtn"><span>⏸️</span>إيقاف</button>
+</div>
+</section>
+</div>
+
+<script type="module">
+import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js";
+
+const $=id=>document.getElementById(id);
+const canvas=$("game");
+const area=$("game").parentElement;
+const overlay=$("overlay");
+const icons=["🍓","🍋","🍇","🍉","🍒","🍍","🥝","🍑","🍊","🥥","🍎","🍐","🍌","🫐","🥕","🍄","🌸","⭐","🌙","💎","❤️","⚡","🔥","🌈","🎈","🐸","🐼","🦊","🐳","🦋","🌻","🍀","🎯","🎲","🎁","🚀","🪐","☀️","🌵","🐙","🐝","🦄","🍪","🍩","🧁","🍭","🎵","🎨","🏆"];
+const scene=new THREE.Scene();
+scene.background=new THREE.Color(0x111a30);
+scene.fog=new THREE.Fog(0x111a30,16,34);
+const camera=new THREE.PerspectiveCamera(42,1,.1,100);
+camera.position.set(7,8,10);
+const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:false});
+renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+renderer.outputColorSpace=THREE.SRGBColorSpace;
+renderer.toneMapping=THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure=1.25;
+const ambient=new THREE.HemisphereLight(0xdde8ff,0x27314b,2.1);
+scene.add(ambient);
+const keyLight=new THREE.DirectionalLight(0xffffff,3);
+keyLight.position.set(5,10,7);
+scene.add(keyLight);
+const fillLight=new THREE.PointLight(0x638dff,30,22);
+fillLight.position.set(-5,4,-3);
+scene.add(fillLight);
+const floor=new THREE.Mesh(new THREE.CircleGeometry(7,64),new THREE.MeshStandardMaterial({color:0x111b31,roughness:.8,metalness:.1}));
+floor.rotation.x=-Math.PI/2;
+floor.position.y=-1.5;
+scene.add(floor);
+const grid=new THREE.GridHelper(14,28,0x30436a,0x24324e);
+grid.position.y=-1.48;
+scene.add(grid);
+const cubeGroup=new THREE.Group();
+scene.add(cubeGroup);
+const raycaster=new THREE.Raycaster();
+const pointer=new THREE.Vector2();
+let tiles=[];
+let slots=[];
+let level=1;
+let score=0;
+let timeLeft=150;
+let playing=false;
+let paused=false;
+let soundOn=true;
+let timer=null;
+let selectedForHint=null;
+let drag=null;
+let lastTime=performance.now();
+let tileSize=5;
+let undoState=null;
+let audioContext=null;
+
+function beep(freq=550,duration=.07){
+if(!soundOn)return;
+try{
+audioContext??=new(window.AudioContext||window.webkitAudioContext)();
+const osc=audioContext.createOscillator();
+const gain=audioContext.createGain();
+osc.frequency.value=freq;
+osc.type="sine";
+gain.gain.setValueAtTime(.055,audioContext.currentTime);
+gain.gain.exponentialRampToValueAtTime(.001,audioContext.currentTime+duration);
+osc.connect(gain);
+gain.connect(audioContext.destination);
+osc.start();
+osc.stop(audioContext.currentTime+duration);
+}catch(e){}
+}
+
+function resize(){
+const w=area.clientWidth;
+const h=area.clientHeight;
+if(!w||!h)return;
+renderer.setSize(w,h,false);
+camera.aspect=w/h;
+camera.fov=h>w*1.05?43:39;
+camera.updateProjectionMatrix();
+}
+window.addEventListener("resize",resize);
+resize();
+
+function shuffle(arr){
+for(let i=arr.length-1;i>0;i--){
+const j=Math.floor(Math.random()*(i+1));
+[arr[i],arr[j]]=[arr[j],arr[i]];
+}
+return arr;
+}
+
+function makeTexture(symbol){
+const c=document.createElement("canvas");
+c.width=256;
+c.height=256;
+const ctx=c.getContext("2d");
+const g=ctx.createLinearGradient(0,0,256,256);
+g.addColorStop(0,"#f4f7ff");
+g.addColorStop(1,"#b7c8ec");
+ctx.fillStyle=g;
+ctx.fillRect(0,0,256,256);
+ctx.strokeStyle="#7792c4";
+ctx.lineWidth=9;
+ctx.strokeRect(7,7,242,242);
+ctx.fillStyle="#202b46";
+ctx.font="112px system-ui, sans-serif";
+ctx.textAlign="center";
+ctx.textBaseline="middle";
+ctx.fillText(symbol,128,132);
+const tex=new THREE.CanvasTexture(c);
+tex.colorSpace=THREE.SRGBColorSpace;
+tex.anisotropy=renderer.capabilities.getMaxAnisotropy();
+return tex;
+}
+
+function makeTile(symbol,x,y,z,layer,index){
+const tile=new THREE.Group();
+tile.position.set(x,y,z);
+tile.userData={tile:true,symbol,baseY:y,layer,index,active:true,highlight:0};
+const bodyGeo=new THREE.BoxGeometry(.94,.38,.94);
+const bodyMat=new THREE.MeshStandardMaterial({color:0x6685bd,roughness:.36,metalness:.14});
+const body=new THREE.Mesh(bodyGeo,bodyMat);
+body.castShadow=true;
+body.receiveShadow=true;
+tile.add(body);
+const topGeo=new THREE.PlaneGeometry(.84,.84);
+const texture=makeTexture(symbol);
+const topMat=new THREE.MeshStandardMaterial({map:texture,roughness:.4,metalness:.03,side:THREE.DoubleSide});
+const top=new THREE.Mesh(topGeo,topMat);
+top.rotation.x=-Math.PI/2;
+top.position.y=.194;
+tile.add(top);
+const edges=new THREE.LineSegments(
+new THREE.EdgesGeometry(bodyGeo),
+new THREE.LineBasicMaterial({color:0xc2d8ff,transparent:true,opacity:.7})
+);
+tile.add(edges);
+tile.userData.body=body;
+tile.userData.top=top;
+tile.userData.texture=texture;
+tile.userData.bodyMaterial=bodyMat;
+cubeGroup.add(tile);
+tiles.push(tile);
+return tile;
+}
+
+function clearTiles(){
+for(const tile of tiles){
+cubeGroup.remove(tile);
+tile.userData.texture?.dispose();
+tile.userData.bodyMaterial?.dispose();
+tile.userData.top?.material?.dispose();
+tile.userData.top?.geometry?.dispose();
+tile.userData.body?.geometry?.dispose();
+}
+tiles=[];
+}
+
+function buildLevel(){
+clearTiles();
+slots=[];
+renderSlots();
+const size=level>=5?7:level>=3?6:5;
+tileSize=size;
+const symbols=icons.slice(0,size*size);
+const spacing=1.02;
+const offset=(size-1)*spacing/2;
+const symbolsShuffled=shuffle([...symbols]);
+let idx=0;
+for(let row=0;row<size;row++){
+for(let col=0;col<size;col++){
+const symbol=symbolsShuffled[idx++];
+for(let layer=0;layer<3;layer++){
+const x=col*spacing-offset+(layer===1?.14:layer===2?-.12:0);
+const z=row*spacing-offset+(layer===1?-.12:layer===2?.14:0);
+const y=-.65+layer*.36;
+makeTile(symbol,x,y,z,layer,idx-1);
+}
+}
+}
+cubeGroup.rotation.set(-.32,.55,0);
+const span=size*1.02+1;
+camera.position.set(span*.78,span*.92,span*1.08);
+camera.lookAt(0,.1,0);
+resize();
+updateStats();
+}
+
+function isFree(tile){
+if(!tile.userData.active)return false;
+for(const other of tiles){
+if(!other.userData.active||other===tile)continue;
+if(other.userData.layer<=tile.userData.layer)continue;
+if(Math.abs(other.position.x-tile.position.x)<.92&&Math.abs(other.position.z-tile.position.z)<.92){
+return false;
+}
+}
+return true;
+}
+
+function exposedTiles(){
+return tiles.filter(t=>t.userData.active&&isFree(t));
+}
+
+function renderSlots(matchIndexes=[]){
+const el=$("slots");
+el.innerHTML="";
+for(let i=0;i<7;i++){
+const box=document.createElement("div");
+box.className="slot"+(slots[i]?" filled":"");
+if(matchIndexes.includes(i))box.classList.add("match");
+box.textContent=slots[i]?.symbol||"";
+el.appendChild(box);
+}
+$("slotCount").textContent=slots.length+" / 7";
+}
+
+function updateStats(){
+$("levelValue").textContent=level;
+$("scoreValue").textContent=score;
+$("timeValue").textContent=Math.max(0,timeLeft);
+$("remainingValue").textContent=tiles.filter(t=>t.userData.active).length;
+$("timeBar").style.width=Math.max(0,timeLeft/(150+Math.max(0,level-1)*15)*100)+"%";
+$("timeBar").style.background=timeLeft<25?"linear-gradient(90deg,#ff627d,#ff9b72)":"linear-gradient(90deg,#4de2e5,#5c8dff)";
+}
+
+function message(text){
+$("message").textContent=text;
+}
+
+function showDialog(icon,title,text,button="العب مجددًا"){
+$("dialogIcon").textContent=icon;
+$("dialogTitle").textContent=title;
+$("dialogText").textContent=text;
+$("startBtn").textContent=button;
+overlay.classList.remove("hidden");
+}
+
+function hideDialog(){
+overlay.classList.add("hidden");
+}
+
+function startGame(){
+clearInterval(timer);
+playing=true;
+paused=false;
+timeLeft=150+Math.max(0,level-1)*15;
+slots=[];
+undoState=null;
+$("pauseBtn").innerHTML="<span>⏸️</span>إيقاف";
+buildLevel();
+renderSlots();
+hideDialog();
+message("اختر المكعبات المكشوفة وطابق ثلاثة رموز");
+timer=setInterval(()=>{
+if(!playing||paused)return;
+timeLeft--;
+updateStats();
+if(timeLeft<=0)endGame(false,"انتهى الوقت! حاول مرة أخرى.");
+},1000);
+}
+
+function finishLevel(){
+playing=false;
+clearInterval(timer);
+score+=level*100;
+updateStats();
+beep(850,.2);
+showDialog("🏆","أحسنت!","أكملت المرحلة "+level+" بنجاح. نقاط إضافية: "+(level*100)+".","المرحلة التالية");
+$("startBtn").onclick=()=>{
+level++;
+startGame();
+};
+}
+
+function endGame(won,text){
+playing=false;
+clearInterval(timer);
+showDialog(won?"🎉":"💔",won?"فزت!":"انتهت اللعبة",text,won?"العب مجددًا":"إعادة المحاولة");
+$("startBtn").onclick=()=>{
+if(!won){level=1;score=0;}
+startGame();
+};
+}
+
+function pickTile(tile){
+if(!playing||paused||!tile?.userData.active||!isFree(tile))return;
+if(slots.length>=7)return;
+undoState={slots:slots.map(t=>t),tile};
+tile.userData.active=false;
+tile.visible=false;
+slots.push({symbol:tile.userData.symbol,tile});
+score+=5;
+beep(430,.045);
+const symbol=tile.userData.symbol;
+const same=[];
+for(let i=0;i<slots.length;i++){
+if(slots[i].symbol===symbol)same.push(i);
+}
+if(same.length>=3){
+const indexes=[];
+for(let i=slots.length-1;i>=0&&indexes.length<3;i--){
+if(slots[i].symbol===symbol)indexes.push(i);
+}
+for(const i of indexes){
+const item=slots[i];
+cubeGroup.remove(item.tile);
+item.tile.userData.texture?.dispose();
+item.tile.userData.bodyMaterial?.dispose();
+item.tile.userData.top?.material?.dispose();
+}
+slots=slots.filter((item,i)=>!indexes.includes(i));
+score+=100;
+beep(760,.12);
+message("✨ مطابقة ناجحة! +100 نقطة");
+renderSlots();
+}else{
+renderSlots();
+message("اجمع 3 رموز متشابهة");
+}
+updateStats();
+if(tiles.every(t=>!t.userData.active)){
+finishLevel();
+return;
+}
+if(slots.length>=7){
+endGame(false,"امتلأت الخانات السبع. حاول اختيار المكعبات بترتيب مختلف.");
+}
+}
+
+function getTileFromObject(obj){
+let current=obj;
+while(current){
+if(current.userData?.tile)return current;
+current=current.parent;
+}
+return null;
+}
+
+function pointerPosition(event){
+const rect=renderer.domElement.getBoundingClientRect();
+pointer.x=((event.clientX-rect.left)/rect.width)*2-1;
+pointer.y=-((event.clientY-rect.top)/rect.height)*2+1;
+}
+
+function hitTile(event){
+pointerPosition(event);
+raycaster.setFromCamera(pointer,camera);
+const visible=tiles.filter(t=>t.visible&&t.userData.active);
+const hits=raycaster.intersectObjects(visible,true);
+if(!hits.length)return null;
+for(const hit of hits){
+const tile=getTileFromObject(hit.object);
+if(tile&&tile.userData.active)return tile;
+}
+return null;
+}
+
+renderer.domElement.addEventListener("pointerdown",event=>{
+if(!playing||paused)return;
+drag={
+id:event.pointerId,
+x:event.clientX,
+y:event.clientY,
+lastX:event.clientX,
+lastY:event.clientY,
+moved:false,
+button:event.button
+};
+renderer.domElement.setPointerCapture(event.pointerId);
+});
+
+renderer.domElement.addEventListener("pointermove",event=>{
+if(!drag||drag.id!==event.pointerId||!playing||paused)return;
+const dx=event.clientX-drag.lastX;
+const dy=event.clientY-drag.lastY;
+if(Math.abs(event.clientX-drag.x)+Math.abs(event.clientY-drag.y)>7)drag.moved=true;
+if(drag.moved){
+cubeGroup.rotation.y+=dx*.009;
+cubeGroup.rotation.x+=dy*.009;
+}
+drag.lastX=event.clientX;
+drag.lastY=event.clientY;
+});
+
+renderer.domElement.addEventListener("pointerup",event=>{
+if(!drag||drag.id!==event.pointerId)return;
+const moved=drag.moved;
+drag=null;
+if(!moved){
+const tile=hitTile(event);
+if(tile)pickTile(tile);
+}
+});
+
+renderer.domElement.addEventListener("pointercancel",()=>{drag=null});
+renderer.domElement.addEventListener("contextmenu",e=>e.preventDefault());
+
+$("startBtn").addEventListener("click",()=>{
+if(!playing)startGame();
+});
+$("helpBtn").addEventListener("click",()=>{
+showDialog("🎮","طريقة اللعب","اسحب المجسم لتدويره واكتشاف المكعبات. اضغط المكعب المكشوف لإزالته من البرج ووضعه في الخانات. اجمع ثلاثة رموز متطابقة لتفريغ الخانات وكسب النقاط. إذا امتلأت الخانات السبع أو انتهى الوقت، تنتهي اللعبة.","فهمت، ابدأ");
+$("startBtn").onclick=()=>startGame();
+});
+
+$("hintBtn").addEventListener("click",()=>{
+if(!playing||paused)return;
+const free=exposedTiles();
+const groups={};
+for(const tile of free){
+const symbol=tile.userData.symbol;
+groups[symbol]??=[];
+groups[symbol].push(tile);
+}
+const available=Object.values(groups).find(group=>group.length>=2);
+if(available){
+const target=available[0];
+cubeGroup.rotation.y+=.18;
+target.userData.bodyMaterial.emissive=new THREE.Color(0x39ffb2);
+target.userData.bodyMaterial.emissiveIntensity=.65;
+setTimeout(()=>{
+if(target.userData.bodyMaterial){
+target.userData.bodyMaterial.emissive=new THREE.Color(0x000000);
+target.userData.bodyMaterial.emissiveIntensity=0;
+}
+},1200);
+message("💡 ابحث عن مكعبين آخرين بالرمز نفسه");
+}else{
+const target=free[0];
+if(target){
+target.userData.bodyMaterial.emissive=new THREE.Color(0x39ffb2);
+target.userData.bodyMaterial.emissiveIntensity=.65;
+setTimeout(()=>{
+if(target.userData.bodyMaterial){
+target.userData.bodyMaterial.emissive=new THREE.Color(0x000000);
+target.userData.bodyMaterial.emissiveIntensity=0;
+}
+},1200);
+message("💡 هذا أحد المكعبات المتاحة حاليًا");
+}
+}
+});
+
+$("shuffleBtn").addEventListener("click",()=>{
+if(!playing||paused)return;
+const active=tiles.filter(t=>t.userData.active);
+const groups=[];
+for(let i=0;i<active.length;i+=3){
+groups.push(active.slice(i,i+3));
+}
+const symbols=shuffle(groups.map(g=>g[0]?.userData.symbol).filter(Boolean));
+let idx=0;
+for(const group of groups){
+const symbol=symbols[idx++];
+for(const tile of group){
+tile.userData.symbol=symbol;
+tile.userData.texture?.dispose();
+const texture=makeTexture(symbol);
+tile.userData.texture=texture;
+tile.userData.top.material.map=texture;
+tile.userData.top.material.needsUpdate=true;
+}
+}
+message("🔀 تم خلط الرموز المتبقية");
+beep(600,.08);
+});
+
+$("undoBtn").addEventListener("click",()=>{
+if(!playing||paused||!undoState)return;
+const last=slots.pop();
+if(last){
+last.tile.userData.active=true;
+last.tile.visible=true;
+score=Math.max(0,score-5);
+}
+undoState=null;
+renderSlots();
+updateStats();
+message("تم التراجع عن آخر اختيار");
+});
+
+$("pauseBtn").addEventListener("click",()=>{
+if(!playing)return;
+paused=!paused;
+$("pauseBtn").innerHTML=paused?"<span>▶️</span>متابعة":"<span>⏸️</span>إيقاف";
+if(paused)message("اللعبة متوقفة مؤقتًا");
+else message("تابع المطابقة!");
+});
+
+$("soundBtn").addEventListener("click",()=>{
+soundOn=!soundOn;
+$("soundBtn").textContent=soundOn?"🔊":"🔇";
+if(soundOn)beep();
+});
+
+$("homeBtn").addEventListener("click",()=>{
+clearInterval(timer);
+playing=false;
+location.href="../index.html";
+});
+
+function animate(now){
+requestAnimationFrame(animate);
+const dt=Math.min(.04,(now-lastTime)/1000);
+lastTime=now;
+for(const tile of tiles){
+if(!tile.visible)continue;
+const targetY=tile.userData.baseY;
+tile.position.y+=(targetY-tile.position.y)*Math.min(1,dt*12);
+}
+renderer.render(scene,camera);
+}
+requestAnimationFrame(animate);
+buildLevel();
+renderSlots();
+</script>
+</body>
+</html>
