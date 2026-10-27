@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="theme-color" content="#0b1020">
+<title>اختراق العقل | Ahmed Tools</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#0b1020;color:#edf3ff;font-family:system-ui,Arial,sans-serif;min-height:100vh;padding:16px}.wrap{max-width:620px;margin:auto}.top{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:18px}.back,button,select{border:1px solid #2a3858;border-radius:12px;background:#18243d;color:#edf3ff;padding:11px 14px;font:inherit;text-decoration:none}h1{font-size:25px;margin:8px 0}.muted{color:#9eacc9;font-size:14px}.panel{background:#121b30;border:1px solid #263452;border-radius:20px;padding:18px;margin:14px 0}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.stat{background:#1a2742;border-radius:13px;padding:10px;text-align:center}.stat b{display:block;font-size:22px;color:#70e1ff}.code{display:flex;justify-content:center;gap:10px;margin:18px 0;direction:ltr}.peg{width:45px;height:52px;border-radius:12px;background:#202e4b;border:1px solid #405478;display:grid;place-items:center;font-size:25px;font-weight:800}.guess{display:flex;gap:8px;justify-content:center;direction:ltr}.guess input{width:48px;height:50px;border-radius:12px;border:1px solid #405478;background:#0b1020;color:white;text-align:center;font-size:22px}.actions{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:14px}button.primary{background:#2563eb;border-color:#3b82f6}button:active{transform:scale(.98)}.message{text-align:center;min-height:26px;color:#8ee7ff;margin:12px 0}.history{display:grid;gap:7px}.row{display:flex;justify-content:space-between;align-items:center;background:#1a2742;padding:9px 12px;border-radius:10px;font-size:14px}.dots{direction:ltr;letter-spacing:5px}.small{font-size:12px;color:#a7b6d5}@media(max-width:380px){body{padding:10px}.panel{padding:13px}.peg{width:39px}.guess input{width:42px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="top"><a class="back" href="index.html">← الألعاب</a><span class="muted">AHMED TOOLS</span></div>
+<h1>🧠 اختراق العقل</h1><div class="muted">اكتشف الشفرة السرية. اللون الأخضر يعني رقمًا صحيحًا في مكانه، والأصفر يعني رقمًا صحيحًا في مكان آخر.</div>
+<div class="panel"><div class="stats"><div class="stat">النقاط<b id="score">0</b></div><div class="stat">المحاولات<b id="tries">0/8</b></div><div class="stat">أفضل نتيجة<b id="best">0</b></div></div>
+<div class="code" id="secret"><div class="peg">?</div><div class="peg">?</div><div class="peg">?</div><div class="peg">?</div></div>
+<div class="guess" id="inputs"><input inputmode="numeric" maxlength="1" aria-label="الرقم الأول"><input inputmode="numeric" maxlength="1" aria-label="الرقم الثاني"><input inputmode="numeric" maxlength="1" aria-label="الرقم الثالث"><input inputmode="numeric" maxlength="1" aria-label="الرقم الرابع"></div>
+<div class="actions"><button class="primary" id="submit">تحقق من الشفرة</button><button id="hint">تلميح</button><button id="restart">لعبة جديدة</button></div><div class="message" id="message">اختر أربعة أرقام مختلفة من 0 إلى 9.</div><div class="small" id="hintText"></div></div>
+<div class="panel"><h3>سجل المحاولات</h3><div class="history" id="history"><div class="muted">ستظهر محاولاتك هنا.</div></div></div>
+</div>
+<script>
+const $=id=>document.getElementById(id);let secret=[],tries=0,score=0,finished=false,hints=0;
+function newGame(){secret=[];while(secret.length<4){let n=Math.floor(Math.random()*10);if(!secret.includes(n))secret.push(n)}tries=0;score=0;finished=false;hints=0;$("score").textContent=score;$("tries").textContent="0/8";$("secret").innerHTML='<div class="peg">?</div>'.repeat(4);$("history").innerHTML="";$("message").textContent="اختر أربعة أرقام مختلفة من 0 إلى 9.";$("hintText").textContent="";document.querySelectorAll("#inputs input").forEach(i=>i.value="");document.querySelectorAll("#inputs input")[0].focus()}
+function check(){if(finished)return;let vals=[...document.querySelectorAll("#inputs input")].map(i=>i.value.trim());if(vals.some(v=>!/^\d$/.test(v))||new Set(vals).size!==4){$("message").textContent="أدخل أربعة أرقام مختلفة.";return}let g=vals.map(Number),exact=0,near=0;g.forEach((n,i)=>{if(n===secret[i])exact++;else if(secret.includes(n))near++});tries++;score+=exact*10+near*3;$("score").textContent=score;$("tries").textContent=tries+"/8";let row=document.createElement("div");row.className="row";row.innerHTML='<b dir="ltr">'+g.join(" ")+'</b><span>🟢 '+exact+' &nbsp; 🟡 '+near+'</span>';$("history").prepend(row);$("message").textContent="في مكانه: "+exact+" — في مكان آخر: "+near;if(exact===4){finished=true;$("message").textContent="رائع! كسرت الشفرة 🎉 نقاطك: "+score;reveal();saveBest()}else if(tries>=8){finished=true;$("message").textContent="انتهت المحاولات! الشفرة: "+secret.join("");reveal()}document.querySelectorAll("#inputs input").forEach(i=>i.value="");document.querySelectorAll("#inputs input")[0].focus()}
+function reveal(){$("secret").innerHTML=secret.map(n=>'<div class="peg">'+n+'</div>').join("")}
+function saveBest(){let b=Number(localStorage.getItem("mindHackerBest")||0);if(score>b){localStorage.setItem("mindHackerBest",score);$("best").textContent=score}}
+$("submit").onclick=check;$("restart").onclick=newGame;$("hint").onclick=()=>{if(finished)return;if(hints>=2){$("hintText").textContent="استخدمت كل التلميحات.";return}hints++;let idx=Math.floor(Math.random()*4);$("hintText").textContent="تلميح: الرقم في الخانة "+(idx+1)+" هو "+secret[idx]+".";score=Math.max(0,score-5);$("score").textContent=score};document.querySelectorAll("#inputs input").forEach((el,i,arr)=>{el.addEventListener("input",()=>{el.value=el.value.replace(/\D/g,"").slice(-1);if(el.value&&arr[i+1])arr[i+1].focus()});el.addEventListener("keydown",e=>{if(e.key==="Enter")check();if(e.key==="Backspace"&&!el.value&&arr[i-1])arr[i-1].focus()})});$("best").textContent=localStorage.getItem("mindHackerBest")||0;newGame();
+</script>
+</body>
+</html>
