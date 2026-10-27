@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="description" content="Ahmed Tools - أدوات ذكية للطلاب والمبرمجين وألعاب ممتعة">
+<meta name="theme-color" content="#2563eb">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<title>Ahmed Tools</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="stylesheet" href="style.css">
+<style>
+.games-banner {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin: 18px 0;
+    padding: 17px;
+    border-radius: 18px;
+    background: linear-gradient(120deg, #2563eb, #7c3aed);
+    color: #fff;
+    text-decoration: none;
+    box-shadow: 0 5px 18px rgba(37, 99, 235, .18);
+    transition: transform .2s;
+}
+.games-banner:active {
+    transform: scale(.98);
+}
+.games-banner-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 54px;
+    height: 54px;
+    flex-shrink: 0;
+    border-radius: 15px;
+    background: rgba(255, 255, 255, .17);
+    font-size: 29px;
+}
+.games-banner-info {
+    flex: 1;
+    min-width: 0;
+}
+.games-banner-info h3 {
+    margin: 0 0 6px;
+    color: #fff;
+    font-size: 17px;
+}
+.games-banner-info p {
+    margin: 0;
+    color: #e0e7ff;
+    font-size: 12px;
+    line-height: 1.7;
+}
+.games-banner-arrow {
+    font-size: 23px;
+    color: #fff;
+}
+.games-banner-label {
+    display: inline-block;
+    margin-top: 7px;
+    padding: 3px 8px;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, .17);
+    color: #fff;
+    font-size: 10px;
+}
+</style>
+</head>
+<body>
+<div class="app">
+<header class="header">
+  <div class="brand"><div class="logo">A</div><div><h1>Ahmed Tools</h1><p>أدوات سريعة وذكية</p></div></div>
+  <button class="theme-btn" id="themeBtn" aria-label="تغيير المظهر">🌙</button>
+</header>
+<main>
+<section id="homePage" class="page active">
+  <div class="hero"><span>🚀 سريع ومجاني</span><h2>كل أدواتك في مكان واحد</h2><p>أدوات مفيدة للمستخدمين والمبرمجين، مع معالجة محلية قدر الإمكان.</p></div>
+
+  <a class="games-banner" href="games/index.html">
+    <div class="games-banner-icon">🎮</div>
+    <div class="games-banner-info">
+      <h3>عالم الألعاب</h3>
+      <p>اختبر ذكاءك، خمّن الأرقام، واستمتع بتحديات جديدة.</p>
+      <span class="games-banner-label">العب الآن · مجاني</span>
+    </div>
+    <span class="games-banner-arrow">←</span>
+  </a>
+
+  <div class="search-box"><span>🔍</span><input id="searchInput" type="search" placeholder="ابحث عن أداة..." autocomplete="off"></div>
+
+  <section>
+    <div class="section-head"><h2>⚡ أدوات سريعة</h2></div>
+    <div class="quick-tools">
+      <button data-tool="calculator">🧮<span>حاسبة</span></button>
+      <button data-tool="number">🔢<span>الأنظمة</span></button>
+      <button data-tool="password">🔐<span>كلمات مرور</span></button>
+      <button data-tool="json">{}<span>JSON</span></button>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-head"><h2>🧰 جميع الأدوات</h2><span id="toolsCount"></span></div>
+    <div class="categories">
+      <button class="category active" data-category="all">الكل</button>
+      <button class="category" data-category="daily">يومية</button>
+      <button class="category" data-category="developer">برمجة</button>
+      <button class="category" data-category="text">نصوص</button>
+    </div>
+    <div class="tools-grid" id="allTools">
+      <button class="tool-card" data-tool="calculator" data-category="daily"><div class="tool-icon">🧮</div><div><h3>آلة حاسبة متطورة</h3><p>حسابات وسجل وذاكرة</p></div><span>←</span></button>
+      <button class="tool-card" data-tool="scientific" data-category="daily"><div class="tool-icon">📐</div><div><h3>حاسبة علمية</h3><p>الدوال الرياضية والجذور والأسس</p></div><span>←</span></button>
+      <button class="tool-card" data-tool="number" data-category="developer"><div class="tool-icon">🔢</div><div><h3>محول الأنظمة</h3><p>Binary و Decimal و Octal و Hex</p></div><span>←</span></button>
+      <button class="tool-card" data-tool="password" data-category="daily"><div class="tool-icon">🔐</div><div><h3>مولد كلمات المرور</h3><p>إنشاء كلمات مرور عشوائية</p></div><span>←</span></button>
+      <button class="tool-card" data-tool="strength" data-category="daily"><div class="tool-icon">🛡️</div><div><h3>فحص كلمة المرور</h3><p>تقدير إرشادي للقوة</p></div><span>←</span></button>
+      <button class="tool-card" data-tool="word" data-category="text"><div class="tool-icon">📝</div><div><h3>عداد النصوص</h3><p>الكلمات والحروف والأسطر</p></div><span>←</span></button>
+      <button class="tool-card" data-tool="json" data-category="developer"><div class="tool-icon">{}</div><div><h3>JSON Formatter</h3><p>تنسيق وضغط والتحقق من JSON</p></div><span>←</span></button>
+      <button class="tool-card" data-tool="base64" data-category="developer"><div class="tool-icon">🔄</div><div><h3>Base64</h3><p>ترميز وفك ترميز UTF-8</p></div><span>←</span></button>
+      <button class="tool-card" data-tool="url" data-category="developer"><div class="tool-icon">🔗</div><div><h3>URL Encoder</h3><p>ترميز وفك ترميز النصوص</p></div><span>←</span></button>
+      <button class="tool-card" data-tool="color" data-category="developer"><div class="tool-icon">🎨</div><div><h3>محول الألوان</h3><p>تحويل HEX و RGB</p></div><span>←</span></button>
+      <button class="tool-card" data-tool="uuid" data-category="developer"><div class="tool-icon">🆔</div><div><h3>UUID Generator</h3><p>إنشاء معرف فريد</p></div><span>←</span></button>
+      <button class="tool-card" data-tool="random" data-category="daily"><div class="tool-icon">🎲</div><div><h3>مولد أرقام</h3><p>إنشاء رقم ضمن نطاق</p></div><span>←</span></button>
+    </div>
+    <p id="noSearchResults" class="empty hidden">لا توجد أدوات مطابقة لبحثك.</p>
+  </section>
+</section>
+
+<section id="favoritesPage" class="page"><div class="page-title"><h2>⭐ المفضلة</h2></div><div id="favoritesList" class="tools-grid"></div></section>
+
+<section id="recentPage" class="page"><div class="page-title"><h2>🕘 آخر الاستخدامات</h2><button id="clearRecent">مسح</button></div><div id="recentList" class="tools-grid"></div></section>
+
+<section id="profilePage" class="page">
+  <div class="profile">
+    <div class="profile-avatar">👨‍💻</div>
+    <h2>أحمد علي نور</h2>
+    <p class="profile-role">طالب ومهتم بالتكنولوجيا والبرمجة</p>
+    <div class="profile-card"><h3>🚀 عني</h3><p>أنا طالب مهتم بالبرمجة وتطوير المواقع والتطبيقات. أتعلم باستمرار وأعمل على بناء مشاريع حقيقية وتحويل الأفكار إلى منتجات مفيدة.</p></div>
+    <div class="profile-card"><h3>💻 اهتماماتي التقنية</h3><div class="skills"><span>Python</span><span>Java</span><span>JavaScript</span><span>HTML</span><span>CSS</span><span>PWA</span><span>AI</span><span>Cybersecurity</span></div></div>
+    <div class="profile-card"><h3>🎯 هدفي</h3><p>تطوير مهاراتي البرمجية وبناء مشاريع حقيقية وتطبيقات ومواقع مفيدة.</p></div>
+  </div>
+</section>
+
+<section id="toolPage" class="page">
+  <div class="tool-header"><button id="backBtn" aria-label="رجوع">→</button><div class="tool-heading"><h2 id="toolTitle"></h2><p id="toolDescription"></p></div><div class="tool-actions"><button id="favoriteBtn" aria-label="المفضلة">☆</button><button id="shareBtn" aria-label="مشاركة">📤</button></div></div>
+  <div id="toolContent"></div>
+</section>
+
+<section id="settingsPage" class="page">
+  <div class="settings">
+    <h2>⚙️ الإعدادات</h2>
+    <div class="setting-card"><div><h3>🎨 المظهر</h3><p>اختر مظهر التطبيق</p></div><select id="themeSelect"><option value="auto">تلقائي</option><option value="light">فاتح</option><option value="dark">داكن</option></select></div>
+    <div class="setting-card"><div><h3>📊 إحصائياتك</h3><p id="statsText"></p></div></div>
+    <div class="setting-card"><div><h3>📳 الاهتزاز</h3><p>اهتزاز بسيط عند الضغط (إذا كان مدعومًا)</p></div><button id="vibrationToggle">تشغيل</button></div>
+    <div class="setting-card"><div><h3>🗑️ حذف بيانات التطبيق</h3><p>حذف السجل والمفضلة والإعدادات المحلية فقط</p></div><button id="resetData">حذف</button></div>
+    <div class="setting-card"><div><h3>🔒 الخصوصية</h3><p>الأدوات تعالج البيانات داخل المتصفح. لا تُدخل كلمات مرورك الحقيقية في أدوات الفحص إذا لم ترغب في ذلك.</p></div></div>
+    <p class="info">Ahmed Tools · إصدار مطوّر</p>
+  </div>
+</section>
+</main>
+
+<nav class="bottom-nav">
+  <button class="nav-btn active" data-page="homePage"><span>🏠</span><small>الرئيسية</small></button>
+  <button class="nav-btn" data-page="favoritesPage"><span>⭐</span><small>المفضلة</small></button>
+  <button class="nav-btn" data-page="recentPage"><span>🕘</span><small>الأخيرة</small></button>
+  <button class="nav-btn" data-page="profilePage"><span>👨‍💻</span><small>عني</small></button>
+  <button class="nav-btn" data-page="settingsPage"><span>⚙️</span><small>الإعدادات</small></button>
+</nav>
+</div>
+
+<div id="toast" role="status" aria-live="polite"></div>
+<script src="script.js"></script>
+</body>
+      </html>
