@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+  <meta name="theme-color" content="#2563eb">
+  <meta name="description" content="Ahmed Tools - مجموعة أدوات سريعة وذكية، وحاسبات وألعاب ومكتبة روايات عربية.">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <title>Ahmed Tools</title>
+  <link rel="manifest" href="./manifest.json">
+  <link rel="icon" href="./icon-192.png">
+  <link rel="stylesheet" href="./style.css">
+
+  <style>
+    .games-banner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 16px;
+      margin: 16px 0;
+      border-radius: 18px;
+      background: linear-gradient(135deg, #2563eb, #7c3aed);
+      color: #fff;
+      text-decoration: none;
+      overflow: hidden;
+    }
+
+    .games-banner-content {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .games-banner h3 {
+      margin: 0 0 6px;
+      font-size: 1.05rem;
+    }
+
+    .games-banner p {
+      margin: 0;
+      font-size: .82rem;
+      line-height: 1.6;
+      opacity: .9;
+    }
+
+    .games-banner-icon {
+      font-size: 2.4rem;
+      flex-shrink: 0;
+    }
+
+    .games-banner-arrow {
+      font-size: 1.4rem;
+      flex-shrink: 0;
+    }
+
+    .library-shortcut {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 15px;
+      margin: 12px 0;
+      border-radius: 16px;
+      border: 1px solid var(--border, #e2e8f0);
+      background: var(--card, #fff);
+      color: inherit;
+      text-decoration: none;
+      cursor: pointer;
+      width: 100%;
+      text-align: right;
+      font: inherit;
+    }
+
+    .library-shortcut-icon {
+      display: grid;
+      place-items: center;
+      width: 48px;
+      height: 48px;
+      flex-shrink: 0;
+      border-radius: 14px;
+      background: #ede9fe;
+      font-size: 1.7rem;
+    }
+
+    .library-shortcut-content {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .library-shortcut h3 {
+      margin: 0 0 5px;
+      font-size: .98rem;
+    }
+
+    .library-shortcut p {
+      margin: 0;
+      font-size: .8rem;
+      line-height: 1.6;
+      opacity: .7;
+    }
+
+    .library-shortcut-arrow {
+      font-size: 1.2rem;
+    }
+
+    body.dark .library-shortcut {
+      background: var(--card, #1e293b);
+      border-color: var(--border, #334155);
+    }
+
+    .home-section-heading {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin: 20px 0 12px;
+    }
+
+    .home-section-heading h2 {
+      font-size: 1.1rem;
+      margin: 0;
+    }
+
+    .home-section-heading p {
+      margin: 4px 0 0;
+      font-size: .82rem;
+      opacity: .7;
+    }
+
+    .profile-card {
+      padding: 22px 16px;
+      margin-bottom: 16px;
+      text-align: center;
+      border-radius: 18px;
+      background: var(--card, #fff);
+      border: 1px solid var(--border, #e2e8f0);
+    }
+
+    .profile-avatar {
+      width: 76px;
+      height: 76px;
+      display: grid;
+      place-items: center;
+      margin: 0 auto 12px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #2563eb, #7c3aed);
+      color: white;
+      font-size: 2rem;
+      font-weight: 800;
+    }
+
+    .profile-card h2 {
+      margin: 0 0 6px;
+    }
+
+    .profile-card p {
+      margin: 5px 0;
+      opacity: .75;
+      line-height: 1.7;
+    }
+
+    .profile-skills {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin-top: 14px;
+    }
+
+    .profile-skills span {
+      padding: 6px 10px;
+      border-radius: 20px;
+      background: var(--soft, #eff6ff);
+      font-size: .78rem;
+    }
+
+    body.dark .profile-card {
+      background: var(--card, #1e293b);
+      border-color: var(--border, #334155);
+    }
+
+    body.dark .profile-skills span {
+      background: var(--soft, #273449);
+    }
+
+    .settings-group {
+      padding: 15px;
+      margin-bottom: 12px;
+      border: 1px solid var(--border, #e2e8f0);
+      background: var(--card, #fff);
+      border-radius: 16px;
+    }
+
+    .settings-group h3 {
+      margin: 0 0 12px;
+      font-size: 1rem;
+    }
+
+    .settings-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 10px 0;
+    }
+
+    .settings-row + .settings-row {
+      border-top: 1px solid var(--border, #e2e8f0);
+    }
+
+    .settings-row label,
+    .settings-row strong {
+      font-size: .9rem;
+    }
+
+    .settings-row select {
+      max-width: 145px;
+      padding: 8px;
+      border-radius: 10px;
+      border: 1px solid var(--border, #d1d5db);
+      background: var(--card, #fff);
+      color: inherit;
+      font: inherit;
+    }
+
+    .danger-btn {
+      border: 0;
+      border-radius: 12px;
+      padding: 11px 14px;
+      width: 100%;
+      background: #dc2626;
+      color: #fff;
+      font: inherit;
+      cursor: pointer;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .empty {
+      padding: 22px 12px;
+      text-align: center;
+      opacity: .7;
+    }
+
+    #noSearchResults {
+      text-align: center;
+      padding: 18px;
+      opacity: .7;
+    }
+
+    #toolContent {
+      min-width: 0;
+      overflow-wrap: anywhere;
+    }
+
+    #toolContent input,
+    #toolContent textarea,
+    #toolContent select {
+      max-width: 100%;
+    }
+
+    #toolContent textarea {
+      resize: vertical;
+    }
+
+    button,
+    a {
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    @media (max-width: 360px) {
+      .games-banner {
+        padding: 12px;
+      }
+
+      .games-banner-icon {
+        font-size: 1.8rem;
+      }
+
+      .library-shortcut {
+        padding: 12px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header class="app-header">
+    <a href="./" class="brand" aria-label="الصفحة الرئيسية">
+      <span class="brand-logo">A</span>
+      <span class="brand-text">
+        <strong>Ahmed Tools</strong>
+        <small>مجموعة أدوات سريعة وذكية</small>
+      </span>
+    </a>
+
+    <button id="themeBtn" class="icon-btn" type="button" aria-label="تغيير المظهر">🌙</button>
+  </header>
+
+  <main id="app">
+
+    <section id="homePage" class="page active">
+
+      <section class="hero">
+        <div class="hero-content">
+          <span class="hero-badge">⚡ أدواتك في مكان واحد</span>
+          <h1>مرحبًا بك في <span>Ahmed Tools</span></h1>
+          <p>أدوات ذكية تساعدك على الحساب والتعلم والبرمجة وإنجاز مهامك بسهولة.</p>
+        </div>
+      </section>
+
+      <a class="games-banner" href="./games/index.html">
+        <div class="games-banner-icon">🎮</div>
+        <div class="games-banner-content">
+          <h3>منطقة الألعاب</h3>
+          <p>اكتشف ألعاب الذكاء والذاكرة والتحدي واختبر مهاراتك.</p>
+        </div>
+        <span class="games-banner-arrow">←</span>
+      </a>
+
+      <button class="library-shortcut" id="openNovelsLibrary" type="button">
+        <span class="library-shortcut-icon">📚</span>
+        <span class="library-shortcut-content">
+          <h3>مكتبة الروايات</h3>
+          <p>اكتشف الروايات العربية، تصفح الفصول، واحفظ تقدمك في القراءة.</p>
+        </span>
+        <span class="library-shortcut-arrow">←</span>
+      </button>
+
+      <div class="home-section-heading">
+        <div>
+          <h2>ابحث عن أداة</h2>
+          <p>اكتب اسم الأداة التي تريدها</p>
+        </div>
+      </div>
+
+      <div class="search-box">
+        <span class="search-icon" aria-hidden="true">🔎</span>
+        <input
+          id="searchInput"
+          type="search"
+          placeholder="ابحث عن آلة حاسبة أو محول..."
+          autocomplete="off"
+          aria-label="البحث عن الأدوات"
+        >
+      </div>
+
+      <div class="quick-tools">
+        <button class="quick-tool" type="button" data-tool="calculator">
+          <span>🧮</span>
+          <strong>الحاسبة</strong>
+        </button>
+
+        <button class="quick-tool" type="button" data-tool="number">
+          <span>🔢</span>
+          <strong>تحويل الأنظمة</strong>
+        </button>
+
+        <button class="quick-tool" type="button" data-tool="password">
+          <span>🔐</span>
+          <strong>كلمة مرور</strong>
+        </button>
+
+        <button class="quick-tool" type="button" data-tool="json">
+          <span>{}</span>
+          <strong>JSON</strong>
+        </button>
+      </div>
+
+      <div class="home-section-heading">
+        <div>
+          <h2>جميع الأدوات</h2>
+          <p id="toolsCount">12 أداة</p>
+        </div>
+      </div>
+
+      <div class="categories">
+        <button class="category active" type="button" data-category="all">الكل</button>
+        <button class="category" type="button" data-category="daily">أدوات يومية</button>
+        <button class="category" type="button" data-category="developer">للمطورين</button>
+        <button class="category" type="button" data-category="text">النصوص</button>
+      </div>
+
+      <div id="allTools" class="tools-grid">
+
+        <button class="tool-card" type="button" data-tool="calculator" data-category="daily">
+          <span class="tool-icon">🧮</span>
+          <span>
+            <h3>آلة حاسبة متطورة</h3>
+            <p>حسابات وذاكرة وسجل ودوال علمية وهندسة وإحصاء ومالية وتحويل</p>
+          </span>
+          <span>←</span>
+        </button>
+
+        <button class="tool-card" type="button" data-tool="scientific" data-category="daily">
+          <span class="tool-icon">📐</span>
+          <span>
+            <h3>حاسبة علمية</h3>
+            <p>الدوال المثلثية والجذور والأسس واللوغاريتمات</p>
+          </span>
+          <span>←</span>
+        </button>
+
+        <button class="tool-card" type="button" data-tool="number" data-category="developer">
+          <span class="tool-icon">🔢</span>
+          <span>
+            <h3>محول الأنظمة</h3>
+            <p>تحويل بين Binary وDecimal وOctal وHex</p>
+          </span>
+          <span>←</span>
+        </button>
+
+        <button class="tool-card" type="button" data-tool="password" data-category="daily">
+          <span class="tool-icon">🔐</span>
+          <span>
+            <h3>مولد كلمات المرور</h3>
+            <p>إنشاء كلمات مرور عشوائية باستخدام مولد آمن</p>
+          </span>
+          <span>←</span>
+        </button>
+
+        <button class="tool-card" type="button" data-tool="strength" data-category="daily">
+          <span class="tool-icon">🛡️</span>
+          <span>
+            <h3>فحص كلمة المرور</h3>
+            <p>تقدير إرشادي لقوة كلمة المرور دون إرسالها</p>
+          </span>
+          <span>←</span>
+        </button>
+
+        <button class="tool-card" type="button" data-tool="word" data-category="text">
+          <span class="tool-icon">📝</span>
+          <span>
+            <h3>عداد النصوص</h3>
+            <p>حساب الكلمات والحروف والأسطر</p>
+          </span>
+          <span>←</span>
+        </button>
+
+        <button class="tool-card" type="button" data-tool="json" data-category="developer">
+          <span class="tool-icon">{}</span>
+          <span>
+            <h3>JSON Formatter</h3>
+            <p>تنسيق وضغط والتحقق من JSON</p>
+          </span>
+          <span>←</span>
+        </button>
+
+        <button class="tool-card" type="button" data-tool="base64" data-category="developer">
+          <span class="tool-icon">🔄</span>
+          <span>
+            <h3>Base64</h3>
+            <p>ترميز وفك ترميز النصوص العربية والإنجليزية</p>
+          </span>
+          <span>←</span>
+        </button>
+
+        <button class="tool-card" type="button" data-tool="url" data-category="developer">
+          <span class="tool-icon">🔗</span>
+          <span>
+            <h3>URL Encoder</h3>
+            <p>ترميز وفك ترميز النصوص والروابط</p>
+          </span>
+          <span>←</span>
+        </button>
+
+        <button class="tool-card" type="button" data-tool="color" data-category="developer">
+          <span class="tool-icon">🎨</span>
+          <span>
+            <h3>محول الألوان</h3>
+            <p>تحويل HEX إلى RGB ومعاينة اللون</p>
+          </span>
+          <span>←</span>
+        </button>
+
+        <button class="tool-card" type="button" data-tool="uuid" data-category="developer">
+          <span class="tool-icon">🆔</span>
+          <span>
+            <h3>UUID Generator</h3>
+            <p>إنشاء معرفات UUID</p>
+          </span>
+          <span>←</span>
+        </button>
+
+        <button class="tool-card" type="button" data-tool="random" data-category="daily">
+          <span class="tool-icon">🎲</span>
+          <span>
+            <h3>مولد الأرقام</h3>
+            <p>إنشاء أرقام عشوائية ضمن نطاق محدد</p>
+          </span>
+          <span>←</span>
+        </button>
+
+      </div>
+
+      <p id="noSearchResults" class="hidden">لم يتم العثور على أدوات مطابقة.</p>
+
+    </section>
+
+    <section id="favoritesPage" class="page">
+      <div class="page-heading">
+        <h1>⭐ المفضلة</h1>
+        <p>الأدوات التي حفظتها للوصول إليها بسرعة.</p>
+      </div>
+      <div id="favoritesList" class="tools-grid"></div>
+    </section>
+
+    <section id="recentPage" class="page">
+      <div class="page-heading">
+        <h1>🕘 آخر الاستخدامات</h1>
+        <p>الأدوات التي استخدمتها مؤخرًا.</p>
+      </div>
+      <button id="clearRecent" class="secondary-btn" type="button">مسح سجل الاستخدام</button>
+      <div id="recentList" class="tools-grid"></div>
+    </section>
+
+    <section id="profilePage" class="page">
+      <div class="page-heading">
+        <h1>👤 الملف الشخصي</h1>
+        <p>تعرف على صاحب المشروع.</p>
+      </div>
+
+      <div class="profile-card">
+        <div class="profile-avatar">A</div>
+        <h2>Ahmed Ali Nour</h2>
+        <p>طالب ومهتم بالتكنولوجيا والبرمجة</p>
+        <p>علوم الحاسوب</p>
+        <div class="profile-skills">
+          <span>Python</span>
+          <span>Java</span>
+          <span>JavaScript</span>
+          <span>HTML</span>
+          <span>CSS</span>
+          <span>PWA</span>
+          <span>AI</span>
+          <span>Cybersecurity</span>
+        </div>
+      </div>
+
+      <div class="settings-group">
+        <h3>🚀 هدف المشروع</h3>
+        <p>تقديم أدوات عملية وسريعة تساعد المستخدمين على التعلم والبرمجة وإنجاز المهام اليومية من الهاتف.</p>
+      </div>
+    </section>
+
+    <section id="toolPage" class="page">
+      <div class="tool-page-header">
+        <button id="backBtn" class="icon-btn" type="button" aria-label="العودة">→</button>
+        <div class="tool-page-heading">
+          <h1 id="toolTitle">الأداة</h1>
+          <p id="toolDescription"></p>
+        </div>
+        <button id="favoriteBtn" class="icon-btn" type="button" aria-label="إضافة للمفضلة">☆</button>
+        <button id="shareBtn" class="icon-btn" type="button" aria-label="مشاركة الأداة">↗</button>
+      </div>
+
+      <div id="toolContent"></div>
+    </section>
+
+    <section id="settingsPage" class="page">
+      <div class="page-heading">
+        <h1>⚙️ الإعدادات</h1>
+        <p>خصص Ahmed Tools حسب تفضيلاتك.</p>
+      </div>
+
+      <div class="settings-group">
+        <h3>🎨 المظهر</h3>
+        <div class="settings-row">
+          <label for="themeSelect">وضع التطبيق</label>
+          <select id="themeSelect">
+            <option value="auto">تلقائي</option>
+            <option value="light">فاتح</option>
+            <option value="dark">داكن</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="settings-group">
+        <h3>📳 الاهتزاز</h3>
+        <div class="settings-row">
+          <span>اهتزاز عند الضغط على الأزرار</span>
+          <button id="vibrationToggle" class="secondary-btn" type="button">تشغيل</button>
+        </div>
+      </div>
+
+      <div class="settings-group">
+        <h3>📊 إحصائيات الاستخدام</h3>
+        <p id="statsText">جارٍ تحميل الإحصائيات...</p>
+      </div>
+
+      <div class="settings-group">
+        <h3>🔒 الخصوصية والبيانات</h3>
+        <p>تُحفظ إعداداتك ومفضلاتك وسجل استخدامك محليًا على جهازك.</p>
+        <button id="resetData" class="danger-btn" type="button">حذف بيانات التطبيق المحلية</button>
+      </div>
+
+      <div class="settings-group">
+        <h3>ℹ️ حول التطبيق</h3>
+        <p>Ahmed Tools — مجموعة أدوات سريعة وذكية.</p>
+        <p>الإصدار 1.0</p>
+      </div>
+    </section>
+
+  </main>
+
+  <nav class="bottom-nav" aria-label="التنقل الرئيسي">
+    <button class="nav-btn active" type="button" data-page="homePage">
+      <span aria-hidden="true">🏠</span>
+      <span>الرئيسية</span>
+    </button>
+
+    <button class="nav-btn" type="button" data-page="favoritesPage">
+      <span aria-hidden="true">⭐</span>
+      <span>المفضلة</span>
+    </button>
+
+    <button class="nav-btn" type="button" data-page="recentPage">
+      <span aria-hidden="true">🕘</span>
+      <span>السجل</span>
+    </button>
+
+    <button class="nav-btn" type="button" data-page="profilePage">
+      <span aria-hidden="true">👤</span>
+      <span>حسابي</span>
+    </button>
+
+    <button class="nav-btn" type="button" data-page="settingsPage">
+      <span aria-hidden="true">⚙️</span>
+      <span>الإعدادات</span>
+    </button>
+  </nav>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script src="./script.js"></script>
+  <script src="./novels.js"></script>
+
+  <script>
+    document.getElementById("openNovelsLibrary")?.addEventListener("click", () => {
+      document.getElementById("novelsNavBtn")?.click();
+    });
+  </script>
+
+</body>
+  </html>
