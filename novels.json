@@ -1,0 +1,52 @@
+[
+  {
+    "id": "city-of-stars",
+    "title": "مدينة النجوم",
+    "author": "أحمد نور",
+    "category": "خيال ومغامرة",
+    "cover": "🌌",
+    "description": "فتاة تكتشف مدينة لا تظهر إلا لمن يجرؤ على البحث عن الحقيقة.",
+    "file": "./novels/city-of-stars.json",
+    "chapterCount": 5
+  },
+  {
+    "id": "house-of-whispers",
+    "title": "بيت الهمسات",
+    "author": "أحمد نور",
+    "category": "غموض",
+    "cover": "🏚️",
+    "description": "ثلاثة أصدقاء يحققون في أصوات غريبة تصدر من منزل مهجور.",
+    "file": "./novels/house-of-whispers.json",
+    "chapterCount": 5
+  },
+  {
+    "id": "desert-compass",
+    "title": "بوصلة الصحراء",
+    "author": "أحمد نور",
+    "category": "مغامرات",
+    "cover": "🧭",
+    "description": "رحلة عبر الصحراء تقود أخوين إلى اكتشاف أهم من الكنز.",
+    "file": "./novels/desert-compass.json",
+    "chapterCount": 5
+  },
+  {
+    "id": "the-last-inventor",
+    "title": "المخترع الأخير",
+    "author": "أحمد نور",
+    "category": "خيال علمي",
+    "cover": "🤖",
+    "description": "فتى يصلح روبوتًا قديمًا ويكتشف رسالة من مستقبل بعيد.",
+    "file": "./novels/the-last-inventor.json",
+    "chapterCount": 5
+  },
+  {
+    "id": "letters-of-rain",
+    "title": "رسائل المطر",
+    "author": "أحمد نور",
+    "category": "دراما",
+    "cover": "🌧️",
+    "description": "رسائل مجهولة تصل إلى مقهى صغير وتغيّر حياة سكان الحي.",
+    "file": "./novels/letters-of-rain.json",
+    "chapterCount": 5
+  }
+]
