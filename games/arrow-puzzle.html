@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="theme-color" content="#111827">
+<title>لغز الأسهم | Ahmed Tools</title>
+<style>
+*{box-sizing:border-box}body{margin:0;padding:14px;background:#0b1220;color:#edf4ff;font-family:system-ui,Arial,sans-serif}.wrap{max-width:540px;margin:auto}.top{display:flex;justify-content:space-between;align-items:center}.back,button{display:inline-block;border:1px solid #34445f;border-radius:12px;padding:10px 13px;background:#19263b;color:#edf4ff;font:inherit;text-decoration:none}h1{font-size:24px;margin:14px 0 4px}.muted{color:#9fb0ca;font-size:14px}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:14px 0}.stat{background:#152137;border:1px solid #2a3a55;border-radius:13px;text-align:center;padding:10px}.stat b{display:block;color:#76e4ff;font-size:20px}.panel{background:#121d30;border:1px solid #2a3a55;border-radius:18px;padding:13px}.board{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:7px;max-width:390px;margin:auto;direction:ltr}.tile{aspect-ratio:1;border:1px solid #334763;border-radius:12px;background:#1a2a43;display:grid;place-items:center;font-size:29px;font-weight:800;cursor:pointer;user-select:none}.tile.empty{background:#0d1728;border-style:dashed;opacity:.55}.tile.blocked{background:#442238;color:#ff9ab9}.tile:active{transform:scale(.96)}.actions{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:13px}.primary{background:#2563eb;border-color:#4384ff}#message{text-align:center;color:#8feaff;min-height:24px;margin:12px 0 3px}.hint{font-size:12px;color:#9fb0ca;margin-top:10px;text-align:center}@media(max-width:360px){body{padding:9px}.board{gap:4px}.tile{font-size:24px;border-radius:8px}}
+</style>
+</head>
+<body><div class="wrap"><div class="top"><a class="back" href="index.html">← الألعاب</a><span class="muted">AHMED TOOLS</span></div><h1>🧩 لغز الأسهم</h1><div class="muted">أخرج كل سهم من اللوحة في اتجاهه. لا يستطيع السهم الخروج إذا كان أمامه سهم آخر.</div><div class="stats"><div class="stat">المستوى<b id="level">1</b></div><div class="stat">الأسهم المتبقية<b id="left">8</b></div><div class="stat">الحركات<b id="moves">0</b></div></div><div class="panel"><div class="board" id="board"></div><div id="message">اضغط سهمًا واضح الطريق ليخرج من اللوحة.</div><div class="actions"><button id="hint">تلميح</button><button id="reset">إعادة المستوى</button><button id="next" class="primary">المستوى التالي</button></div><div class="hint">⬆️ أعلى &nbsp; ⬇️ أسفل &nbsp; ⬅️ يسار &nbsp; ➡️ يمين</div></div></div>
+<script>
+const $=id=>document.getElementById(id);
+const levels=[
+[{x:0,y:0,d:"left"},{x:2,y:0,d:"up"},{x:4,y:0,d:"right"},{x:1,y:2,d:"left"},{x:3,y:2,d:"right"},{x:0,y:4,d:"down"},{x:2,y:4,d:"down"},{x:4,y:4,d:"right"}],
+[{x:1,y:0,d:"up"},{x:3,y:0,d:"up"},{x:0,y:1,d:"left"},{x:4,y:1,d:"right"},{x:1,y:3,d:"left"},{x:3,y:3,d:"right"},{x:0,y:4,d:"down"},{x:4,y:4,d:"down"}],
+[{x:0,y:0,d:"left"},{x:2,y:0,d:"up"},{x:4,y:0,d:"right"},{x:0,y:2,d:"left"},{x:2,y:2,d:"down"},{x:4,y:2,d:"right"},{x:0,y:4,d:"down"},{x:2,y:4,d:"down"},{x:4,y:4,d:"right"}]];
+const icons={up:"⬆️",down:"⬇️",left:"⬅️",right:"➡️"};let level=0,arrows=[],moves=0,selected=null;
+function setup(){arrows=levels[level%levels.length].map((a,i)=>({...a,id:i,active:true}));moves=0;selected=null;render();$("level").textContent=level+1;$("left").textContent=arrows.length;$("moves").textContent=0;$("message").textContent="اضغط سهمًا واضح الطريق ليخرج من اللوحة."}
+function pathClear(a){return arrows.every(b=>!b.active||b.id===a.id||!((a.d==="left"&&b.y===a.y&&b.x<a.x)||(a.d==="right"&&b.y===a.y&&b.x>a.x)||(a.d==="up"&&b.x===a.x&&b.y<a.y)||(a.d==="down"&&b.x===a.x&&b.y>a.y)))}
+function render(){let board=$("board");board.innerHTML="";for(let y=0;y<5;y++)for(let x=0;x<5;x++){let a=arrows.find(q=>q.active&&q.x===x&&q.y===y),cell=document.createElement("button");cell.className="tile"+(!a?" empty":"");if(a){cell.textContent=icons[a.d];cell.setAttribute("aria-label","سهم "+a.d);cell.onclick=()=>tap(a.id)}else{cell.textContent="";cell.disabled=true}board.appendChild(cell)}$("left").textContent=arrows.filter(a=>a.active).length}
+function tap(id){let a=arrows.find(q=>q.id===id&&q.active);if(!a)return;if(!pathClear(a)){$("message").textContent="الطريق مسدود! أخرج الأسهم التي أمامه أولًا.";return}a.active=false;moves++;$("moves").textContent=moves;$("message").textContent="ممتاز! خرج سهم من اللوحة.";render();if(arrows.every(a=>!a.active)){$("message").textContent="أحسنت! أكملت المستوى 🎉";$("left").textContent=0}}
+$("hint").onclick=()=>{let a=arrows.find(a=>a.active&&pathClear(a));$("message").textContent=a?"تلميح: جرّب السهم "+icons[a.d]+" في الصف "+(a.y+1)+".":"لا يوجد سهم متاح حاليًا."};
+$("reset").onclick=setup;$("next").onclick=()=>{if(arrows.every(a=>!a.active)){level++;setup()}else $("message").textContent="أخرج جميع الأسهم أولًا لإكمال المستوى."};setup();
+</script></body></html>
