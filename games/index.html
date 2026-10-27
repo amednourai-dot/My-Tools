@@ -1,0 +1,169 @@
+<!DOCTYPE html><html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="theme-color" content="#0f172a">
+<meta name="description" content="معرض ألعاب Ahmed Tools: ألعاب ذكاء وألغاز وتحديات ومغامرات مجانية.">
+<title>الألعاب | Ahmed Tools</title>
+<style>
+:root{color-scheme:dark;--bg:#0f172a;--panel:#172033;--panel2:#202b40;--text:#f8fafc;--muted:#a8b4c8;--blue:#3b82f6;--border:#29364d;--green:#22c55e}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{min-height:100%;background:var(--bg)}
+body{margin:0;min-height:100vh;background:var(--bg);color:var(--text);font-family:Arial,Tahoma,sans-serif;font-size:14px}
+button,input,a{-webkit-tap-highlight-color:transparent}
+a{color:inherit;text-decoration:none}
+button{font:inherit}
+.container{width:min(100%,1000px);margin:auto;padding:14px}
+header{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:16px}
+.brand{display:flex;align-items:center;gap:9px}
+.logo{width:42px;height:42px;display:grid;place-items:center;border-radius:13px;background:linear-gradient(135deg,#3b82f6,#7c3aed);font-size:22px;font-weight:bold}
+.brand h1{font-size:19px;margin:0 0 4px}
+.brand p{font-size:11px;color:var(--muted);margin:0}
+.home{background:var(--panel);border:1px solid var(--border);padding:10px 12px;border-radius:11px;font-size:12px;white-space:nowrap}
+.hero{background:linear-gradient(135deg,#1d355b,#28204a);border:1px solid #34466b;border-radius:17px;padding:17px;margin-bottom:14px}
+.hero h2{font-size:20px;margin:0 0 8px}
+.hero p{color:#cbd5e1;line-height:1.7;margin:0;font-size:12px}
+.stats{display:flex;gap:8px;margin-top:14px}
+.stat{flex:1;background:#0f172a77;border:1px solid #ffffff16;border-radius:10px;padding:9px;text-align:center}
+.stat strong{display:block;font-size:19px;margin-bottom:4px}
+.stat span{font-size:10px;color:#cbd5e1}
+.search-wrap{position:relative;margin-bottom:12px}
+.search-wrap input{width:100%;height:44px;border-radius:12px;border:1px solid var(--border);background:var(--panel);color:var(--text);padding:0 40px 0 12px;outline:none;font-size:13px}
+.search-wrap input:focus{border-color:var(--blue)}
+.search-icon{position:absolute;right:14px;top:13px}
+.filters{display:flex;gap:7px;overflow-x:auto;padding-bottom:10px;margin-bottom:5px;scrollbar-width:none}
+.filters::-webkit-scrollbar{display:none}
+.filter{flex-shrink:0;border:1px solid var(--border);background:var(--panel);color:var(--muted);border-radius:20px;padding:8px 12px;font-size:11px;cursor:pointer}
+.filter.active{background:var(--blue);color:white;border-color:var(--blue)}
+.section-title{display:flex;align-items:center;justify-content:space-between;margin:12px 0}
+.section-title h2{font-size:15px;margin:0}
+.section-title span{font-size:11px;color:var(--muted)}
+.games-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}
+.game-card{min-width:0;display:flex;flex-direction:column;align-items:center;text-align:center;background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:12px 5px 10px;transition:transform .15s,border-color .15s}
+.game-card:active{transform:scale(.97)}
+.game-card:hover{border-color:#5279ba}
+.game-icon{width:48px;height:48px;display:grid;place-items:center;border-radius:14px;background:var(--panel2);font-size:26px;margin-bottom:9px}
+.game-card h3{font-size:11px;line-height:1.5;margin:0 0 5px;overflow-wrap:anywhere}
+.game-card p{font-size:9px;line-height:1.6;color:var(--muted);margin:0 0 10px;flex:1;overflow-wrap:anywhere}
+.play{display:block;width:100%;background:#2563eb;color:white;padding:8px 2px;border-radius:8px;font-size:10px;font-weight:bold}
+.badge{font-size:9px;color:#86efac;background:#14532d66;border:1px solid #166534;border-radius:20px;padding:4px 7px;margin-bottom:7px}
+.empty{display:none;text-align:center;color:var(--muted);padding:30px 10px;background:var(--panel);border-radius:12px}
+footer{text-align:center;color:var(--muted);font-size:10px;padding:23px 5px 12px}
+@media(min-width:650px){.container{padding:22px}.brand h1{font-size:23px}.hero{padding:24px}.hero h2{font-size:25px}.games-grid{gap:13px}.game-card{padding:16px 10px}.game-icon{width:58px;height:58px;font-size:31px}.game-card h3{font-size:13px}.game-card p{font-size:11px}.play{font-size:12px}.game-card .badge{font-size:10px}}
+</style>
+</head>
+<body>
+<div class="container">
+<header>
+<a class="brand" href="../index.html">
+<div class="logo">A</div>
+<div><h1>Ahmed Tools</h1><p>مركز الألعاب والتحديات</p></div>
+</a>
+<a class="home" href="../index.html">⌂ الرئيسية</a>
+</header><section class="hero">
+<h2>🎮 عالم الألعاب</h2>
+<p>اختبر ذكاءك، اكسر الأرقام القياسية، واستمتع بمجموعة متنوعة من الألعاب المصممة لتعمل على هاتفك.</p>
+<div class="stats">
+<div class="stat"><strong id="totalCount">21</strong><span>لعبة</span></div>
+<div class="stat"><strong id="visibleCount">21</strong><span>معروضة</span></div>
+<div class="stat"><strong>∞</strong><span>متعة وتحدي</span></div>
+</div>
+</section><div class="search-wrap">
+<span class="search-icon">🔎</span>
+<input id="search" type="search" placeholder="ابحث عن لعبة..." autocomplete="off">
+</div><nav class="filters" aria-label="تصنيفات الألعاب">
+<button class="filter active" data-category="all">🎮 الكل</button>
+<button class="filter" data-category="brain">🧠 ذكاء</button>
+<button class="filter" data-category="fun">😄 ترفيه</button>
+<button class="filter" data-category="challenge">⚡ تحديات</button>
+<button class="filter" data-category="adventure">🗺️ مغامرات</button>
+<button class="filter" data-category="strategy">♟️ استراتيجية</button>
+</nav><div class="section-title">
+<h2>جميع الألعاب</h2>
+<span id="resultText">21 لعبة</span>
+</div><main class="games-grid" id="gamesGrid"><a class="game-card" href="guess-number.html" data-category="brain challenge" data-name="تخمين الرقم guess number">
+<div class="game-icon">🔢</div><h3>تخمين الرقم</h3><p>اكتشف الرقم السري قبل انتهاء المحاولات.</p><span class="badge">ذكاء</span><span class="play">العب الآن</span>
+</a><a class="game-card" href="tic-tac-toe.html" data-category="strategy fun" data-name="إكس أو tic tac toe">
+<div class="game-icon">⭕</div><h3>إكس أو</h3><p>تغلّب على خصمك في لعبة إكس أو.</p><span class="badge">استراتيجية</span><span class="play">العب الآن</span>
+</a><a class="game-card" href="rock-paper-scissors.html" data-category="fun challenge" data-name="حجر ورقة مقص">
+<div class="game-icon">✊</div><h3>حجر ورقة مقص</h3><p>واجه الكمبيوتر وحاول الفوز.</p><span class="badge">ترفيه</span><span class="play">العب الآن</span>
+</a><a class="game-card" href="extra-games.html?game=memory" data-category="brain challenge" data-name="اختبار الذاكرة memory">
+<div class="game-icon">🧠</div><h3>اختبار الذاكرة</h3><p>اختبر قدرتك على التذكر.</p><span class="badge">ذاكرة</span><span class="play">العب الآن</span>
+</a><a class="game-card" href="extra-games.html?game=math" data-category="brain challenge" data-name="تحدي الرياضيات math">
+<div class="game-icon">➗</div><h3>تحدي الرياضيات</h3><p>حل المسائل بأسرع وقت.</p><span class="badge">رياضيات</span><span class="play">العب الآن</span>
+</a><a class="game-card" href="extra-games.html?game=word" data-category="brain fun" data-name="تخمين الكلمة word">
+<div class="game-icon">🔤</div><h3>تخمين الكلمة</h3><p>اكتشف الكلمة المخفية.</p><span class="badge">كلمات</span><span class="play">العب الآن</span>
+</a><a class="game-card" href="minesweeper.html" data-category="brain strategy" data-name="كاسحة الألغام minesweeper">
+<div class="game-icon">💣</div><h3>كاسحة الألغام</h3><p>اكشف المربعات وتجنب الألغام.</p><span class="badge">استراتيجية</span><span class="play">العب الآن</span>
+</a><a class="game-card" href="logic-puzzle.html" data-category="brain strategy" data-name="لغز منطقي logic puzzle">
+<div class="game-icon">🧩</div><h3>لغز منطقي</h3><p>استخدم المنطق لحل الألغاز.</p><span class="badge">ألغاز</span><span class="play">العب الآن</span>
+</a><a class="game-card" href="reaction-test.html" data-category="challenge fun" data-name="اختبار سرعة الاستجابة reaction test">
+<div class="game-icon">⚡</div><h3>سرعة الاستجابة</h3><p>اختبر سرعة رد فعلك.</p><span class="badge">سرعة</span><span class="play">العب الآن</span>
+</a><a class="game-card" href="color-challenge.html" data-category="challenge brain" data-name="تحدي الألوان color challenge">
+<div class="game-icon">🎨</div><h3>تحدي الألوان</h3><p>اختبر تركيزك في تمييز الألوان.</p><span class="badge">تركيز</span><span class="play">العب الآن</span>
+</a><a class="game-card" href="cube-master-3d.html" data-category="brain challenge" data-name="cube master 3d المكعب">
+<div class="game-icon">🧊</div><h3>Cube Master 3D</h3><p>اختبر مهاراتك مع تحديات المكعب.</p><span class="badge">مهارة</span><span class="play">العب الآن</span>
+</a><a class="game-card" href="mind-hacker.html" data-category="brain challenge" data-name="mind hacker اختراق العقل">
+<div class="game-icon">🕵️</div><h3>Mind Hacker</h3><p>اكتشف الشفرة الرقمية السرية.</p><span class="badge">ذكاء</span><span class="play">العب الآن</span>
+</a><a class="game-card" href="ice-escape.html" data-category="adventure brain" data-name="ice escape الهروب من الجليد">
+<div class="game-icon">🧊</div><h3>Ice Escape</h3><p>اعثر على طريق الخروج من المتاهة الجليدية.</p><span class="badge">مغامرة</span><span class="play">العب الآن</span>
+</a><a class="game-card" href="money-empire.html" data-category="strategy fun" data-name="money empire إمبراطورية المال">
+<div class="game-icon">💰</div><h3>Money Empire</h3><p>أنشئ مشاريعك وابنِ إمبراطوريتك المالية.</p><span class="badge">استراتيجية</span><span class="play">العب الآن</span>
+</a><a class="game-card" href="neon-rush.html" data-category="challenge adventure" data-name="neon rush الاندفاع النيون">
+<div class="game-icon">🌌</div><h3>Neon Rush</h3><p>تفادَ العقبات واجمع العملات.</p><span class="badge">سرعة</span><span class="play">العب الآن</span>
+</a><a class="game-card" href="gravity-flip.html" data-category="challenge adventure" data-name="gravity flip قلب الجاذبية">
+<div class="game-icon">🪐</div><h3>Gravity Flip</h3><p>اقلب الجاذبية وتجاوز العقبات.</p><span class="badge">مهارة</span><span class="play">العب الآن</span>
+</a><a class="game-card" href="arrow-puzzle.html" data-category="brain strategy" data-name="arrow puzzle لغز الأسهم">
+<div class="game-icon">➡️</div><h3>Arrow Puzzle</h3><p>افتح المسارات وحل لغز الأسهم.</p><span class="badge">ألغاز</span><span class="play">العب الآن</span>
+</a><a class="game-card" href="bomb-escape.html" data-category="adventure challenge" data-name="bomb escape الهروب من القنبلة">
+<div class="game-icon">💣</div><h3>Bomb Escape</h3><p>اجمع المفتاح واهرب قبل انتهاء الوقت.</p><span class="badge">مغامرة</span><span class="play">العب الآن</span>
+</a><a class="game-card" href="memory-master.html" data-category="brain challenge" data-name="memory master سيد الذاكرة">
+<div class="game-icon">🧠</div><h3>Memory Master</h3><p>احفظ تسلسل الألوان وأعده دون أخطاء.</p><span class="badge">ذاكرة</span><span class="play">العب الآن</span>
+</a><a class="game-card" href="code-breaker.html" data-category="brain strategy" data-name="code breaker كاسر الشفرة">
+<div class="game-icon">🔐</div><h3>Code Breaker</h3><p>حلل المحاولات واكتشف الشفرة السرية.</p><span class="badge">تشفير</span><span class="play">العب الآن</span>
+</a><a class="game-card" href="hacker-simulator.html" data-category="brain challenge" data-name="hacker simulator محاكي الاختراق">
+<div class="game-icon">💻</div><h3>Hacker Simulator</h3><p>حل تحديات رقمية في محاكاة اختراق خيالية.</p><span class="badge">تقنية</span><span class="play">العب الآن</span>
+</a></main><div class="empty" id="empty">لم نعثر على ألعاب تطابق بحثك.</div><footer>Ahmed Tools © 2026 · العب وتعلّم وتحدَّ نفسك</footer>
+</div><script>
+const cards=[...document.querySelectorAll(".game-card")];
+const search=document.getElementById("search");
+const filters=[...document.querySelectorAll(".filter")];
+const totalCount=document.getElementById("totalCount");
+const visibleCount=document.getElementById("visibleCount");
+const resultText=document.getElementById("resultText");
+const empty=document.getElementById("empty");
+const grid=document.getElementById("gamesGrid");
+let activeCategory="all";
+
+function updateGames(){
+const query=search.value.trim().toLowerCase();
+let visible=0;
+cards.forEach(card=>{
+const category=card.dataset.category.split(" ");
+const name=(card.dataset.name+" "+card.innerText).toLowerCase();
+const categoryMatch=activeCategory==="all"||category.includes(activeCategory);
+const searchMatch=name.includes(query);
+const show=categoryMatch&&searchMatch;
+card.style.display=show?"flex":"none";
+if(show)visible++;
+});
+totalCount.textContent=cards.length;
+visibleCount.textContent=visible;
+resultText.textContent=visible+" لعبة";
+empty.style.display=visible?"none":"block";
+grid.style.display=visible?"grid":"none";
+}
+
+filters.forEach(button=>{
+button.addEventListener("click",()=>{
+filters.forEach(item=>item.classList.remove("active"));
+button.classList.add("active");
+activeCategory=button.dataset.category;
+updateGames();
+});
+});
+
+search.addEventListener("input",updateGames);
+updateGames();
+</script></body>
+      </html>
