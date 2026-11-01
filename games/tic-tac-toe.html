@@ -1,0 +1,974 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="theme-color" content="#0b1020">
+<meta name="description" content="لعبة إكس أو الذكية من Ahmed Tools: تحديات وألغاز وبطولات وذكاء اصطناعي وإحصائيات وإنجازات.">
+<title>إكس أو الذكية | Ahmed Tools</title>
+<style>
+:root{--bg:#0b1020;--panel:#141c30;--panel2:#1b2740;--text:#f2f5ff;--muted:#9ba9c5;--accent:#60a5fa;--accent2:#8b5cf6;--win:#22c55e;--danger:#f87171;--border:#2a3854;--cell:#1b2740}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",sans-serif;min-height:100dvh}
+button,select,input{font:inherit}
+button{cursor:pointer;touch-action:manipulation}
+button:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+.app{max-width:900px;margin:auto;padding:14px;padding-bottom:30px}
+header{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px}
+.brand{display:flex;align-items:center;gap:10px}
+.logo{width:45px;height:45px;border-radius:15px;display:grid;place-items:center;background:linear-gradient(135deg,var(--accent),var(--accent2));font-size:24px;font-weight:900}
+h1{font-size:20px;margin:0}
+.subtitle{color:var(--muted);font-size:12px;margin-top:3px}
+.icon-btn,.btn,.select,.input{border:1px solid var(--border);background:var(--panel);color:var(--text);border-radius:12px;padding:10px 12px}
+.icon-btn{min-width:42px}
+.btn{font-weight:700;transition:transform .15s,opacity .15s}
+.btn:active{transform:scale(.97)}
+.btn.primary{background:linear-gradient(135deg,var(--accent),var(--accent2));border:0;color:#fff}
+.btn.good{border-color:#166534;background:#123324}
+.btn.danger{border-color:#7f1d1d}
+.btn.small{font-size:12px;padding:8px 10px}
+.tabs{display:flex;gap:7px;overflow:auto;padding-bottom:8px;margin-bottom:10px;scrollbar-width:none}
+.tabs button{white-space:nowrap;flex:1}
+.tab.active{background:var(--accent);color:#07101f;border-color:transparent}
+.panel{background:var(--panel);border:1px solid var(--border);border-radius:18px;padding:14px;margin-bottom:12px}
+h2{font-size:16px;margin:0 0 12px}
+h3{font-size:14px;margin:12px 0 8px}
+label{font-size:12px;color:var(--muted);display:block;margin-bottom:5px}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.row>*{flex:1}
+.field{min-width:110px;margin-bottom:10px}
+select,input{width:100%;min-width:0}
+.status{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:12px}
+.turn{background:var(--panel2);padding:10px 12px;border-radius:12px;font-weight:800}
+.clock{color:var(--accent);font-weight:900;font-size:20px}
+.board{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;max-width:440px;margin:auto}
+.cell{aspect-ratio:1;border:1px solid var(--border);border-radius:15px;background:var(--cell);color:var(--text);font-size:clamp(32px,10vw,65px);font-weight:900;display:grid;place-items:center;min-width:0}
+.cell.x{color:#60a5fa}
+.cell.o{color:#c084fc}
+.cell.winning{background:#14532d;border-color:var(--win);box-shadow:0 0 14px #22c55e33}
+.cell:disabled{cursor:default;opacity:1}
+.cell:disabled:not(.winning){opacity:.86}
+.board.four{grid-template-columns:repeat(4,minmax(0,1fr));max-width:500px}
+.board.four .cell{font-size:clamp(22px,7vw,45px);border-radius:10px}
+.score-grid,.stats-grid,.achievement-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.stat{background:var(--panel2);border-radius:13px;padding:11px;text-align:center;min-width:0}
+.stat strong{font-size:22px;display:block}
+.stat span{font-size:11px;color:var(--muted)}
+.message{color:var(--muted);font-size:13px;line-height:1.7;min-height:22px;margin:10px 0}
+.actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.mini-list{display:grid;gap:7px}
+.list-item{display:flex;justify-content:space-between;gap:10px;align-items:center;background:var(--panel2);padding:10px;border-radius:11px;font-size:12px}
+.badge{border-radius:999px;padding:4px 8px;background:#263b5b;color:#bfdbfe;font-size:11px;white-space:nowrap}
+.muted{color:var(--muted);font-size:12px;line-height:1.8}
+.hidden{display:none!important}
+.progress{height:8px;background:var(--panel2);border-radius:20px;overflow:hidden;margin-top:8px}
+.progress div{height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .3s}
+canvas{width:100%;height:170px;display:block}
+.achievement{border:1px solid var(--border);border-radius:12px;padding:10px;text-align:center}
+.achievement.locked{opacity:.45}
+.achievement .emoji{font-size:23px}
+.achievement strong{font-size:12px;display:block;margin:5px 0}
+.achievement span{font-size:10px;color:var(--muted)}
+.toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:#e2e8f0;color:#0b1020;padding:11px 16px;border-radius:12px;font-size:13px;font-weight:700;box-shadow:0 8px 30px #0005;z-index:10;max-width:90%;text-align:center}
+footer{text-align:center;color:var(--muted);font-size:11px;padding:12px}
+body.light{--bg:#f2f5fb;--panel:#fff;--panel2:#edf2fb;--text:#172033;--muted:#62708a;--border:#d6deec;--cell:#fff}
+body.neon{--bg:#080d12;--panel:#0c1d21;--panel2:#112b30;--text:#d9fff4;--muted:#8bb8b1;--border:#20504b;--cell:#10272b;--accent:#2dd4bf;--accent2:#a3e635}
+body.rose{--bg:#1c1020;--panel:#2b1930;--panel2:#3b2340;--text:#fff1fa;--muted:#d1a9c5;--border:#583451;--cell:#321f39;--accent:#f472b6;--accent2:#c084fc}
+@media(min-width:700px){.game-layout{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(250px,.8fr);gap:12px;align-items:start}.game-layout .panel{margin-bottom:0}}
+@media(max-width:420px){.app{padding:10px}.panel{padding:11px}.score-grid,.stats-grid{gap:5px}.stat{padding:8px}.stat strong{font-size:19px}.cell{border-radius:10px}.tabs button{font-size:12px;padding:9px 10px}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<div class="app">
+<header>
+<div class="brand">
+<div class="logo">XO</div>
+<div><h1>إكس أو الذكية</h1><div class="subtitle">Ahmed Tools · العب وتحدَّ ذكاءك</div></div>
+</div>
+<button class="icon-btn" id="themeQuick" aria-label="تغيير المظهر">🌙</button>
+</header>
+
+<nav class="tabs" aria-label="أقسام اللعبة">
+<button class="btn tab active" data-page="game">🎮 اللعب</button>
+<button class="btn tab" data-page="challenges">🧩 التحديات</button>
+<button class="btn tab" data-page="achievements">🏆 الإنجازات</button>
+<button class="btn tab" data-page="stats">📊 الإحصائيات</button>
+<button class="btn tab" data-page="settings">⚙️ الإعدادات</button>
+</nav>
+
+<main>
+<section class="page" id="page-game">
+<div class="game-layout">
+<div class="panel">
+<h2>إعداد المباراة</h2>
+<div class="row">
+<div class="field"><label for="mode">وضع اللعب</label><select id="mode" class="select">
+<option value="cpu">ضد الكمبيوتر</option>
+<option value="friend">لاعبان على جهاز واحد</option>
+<option value="timed">تحدي السرعة</option>
+<option value="infinite">إكس أو اللانهائية</option>
+<option value="tournament">بطولة من 3 جولات</option>
+<option value="ultimate">إكس أو الكبرى</option>
+</select></div>
+<div class="field"><label for="difficulty">مستوى الكمبيوتر</label><select id="difficulty" class="select">
+<option value="easy">سهل</option><option value="medium">متوسط</option><option value="hard">صعب</option>
+</select></div>
+</div>
+<div class="row">
+<div class="field"><label for="boardSize">حجم اللوحة</label><select id="boardSize" class="select"><option value="3">3 × 3</option><option value="4">4 × 4</option></select></div>
+<div class="field"><label for="symbolSet">الرموز</label><select id="symbolSet" class="select"><option value="xo">X و O</option><option value="shapes">❌ و ⭕</option><option value="stars">⭐ و 🌙</option><option value="animals">🐱 و 🐼</option></select></div>
+</div>
+<div id="ultimateNotice" class="muted hidden">في وضع إكس أو الكبرى، كل خانة في اللوحة الرئيسية تحتوي لوحة صغيرة. يجب اللعب داخل اللوحة التي يحددها اختيار الخصم السابق.</div>
+<div class="status"><div class="turn" id="turnLabel" aria-live="polite">دور X</div><div class="clock hidden" id="clock">10</div></div>
+<div id="board" class="board" role="group" aria-label="لوحة اللعب"></div>
+<div class="message" id="message" aria-live="polite">ابدأ مباراة جديدة واختر أسلوب اللعب.</div>
+<div class="actions">
+<button class="btn primary" id="newGame">🔄 مباراة جديدة</button>
+<button class="btn" id="undo">↩️ تراجع</button>
+<button class="btn" id="hint">💡 تلميح ذكي</button>
+<button class="btn" id="analyze">🧠 تحليل المباراة</button>
+</div>
+<div class="muted" id="coach">المدرب الذكي سيقدم لك نصائح أثناء اللعب.</div>
+</div>
+
+<div>
+<div class="panel">
+<h2>النتائج</h2>
+<div class="score-grid">
+<div class="stat"><strong id="scoreX">0</strong><span id="labelX">انتصارات X</span></div>
+<div class="stat"><strong id="scoreDraw">0</strong><span>تعادلات</span></div>
+<div class="stat"><strong id="scoreO">0</strong><span id="labelO">انتصارات O</span></div>
+</div>
+<div class="muted" id="tournamentStatus">البطولة: 0 من 3 جولات</div>
+<div class="progress"><div id="tournamentProgress"></div></div>
+</div>
+<div class="panel">
+<h2>التقدم والمستوى</h2>
+<div class="row">
+<div class="stat"><strong id="xp">0</strong><span>نقاط الخبرة XP</span></div>
+<div class="stat"><strong id="level">مبتدئ</strong><span>المستوى</span></div>
+</div>
+<div class="progress"><div id="xpProgress"></div></div>
+<div class="muted" id="xpNext">ابدأ اللعب لكسب نقاط الخبرة.</div>
+</div>
+<div class="panel">
+<h2>آخر المباريات</h2>
+<div class="mini-list" id="recentGames"><div class="muted">لا توجد مباريات محفوظة بعد.</div></div>
+</div>
+</div>
+</div>
+</section>
+
+<section class="page hidden" id="page-challenges">
+<div class="panel">
+<h2>🧩 التحدي اليومي</h2>
+<p class="muted">لديك وضع يومي يحاول فيه اللاعب X الفوز بحركة واحدة. أكمل التحدي لكسب الخبرة.</p>
+<div class="row"><div class="stat"><strong id="dailyStatus">غير مكتمل</strong><span>حالة اليوم</span></div><div class="stat"><strong>+50 XP</strong><span>مكافأة التحدي</span></div></div>
+<button class="btn primary" id="dailyBtn">ابدأ تحدي اليوم</button>
+</div>
+<div class="panel">
+<h2>ألغاز تكتيكية</h2>
+<p class="muted">اختر اللغز وابحث عن الحركة التي تحقق الفوز. بعض الألغاز تتطلب إيقاف الخصم قبل أن يفوز.</p>
+<div class="row">
+<div class="field"><label for="puzzleSelect">اختر اللغز</label><select id="puzzleSelect" class="select"><option value="1">اللغز الأول: فرصة فوز</option><option value="2">اللغز الثاني: أوقف الخصم</option><option value="3">اللغز الثالث: حركة مزدوجة</option></select></div>
+<button class="btn primary" id="puzzleBtn">ابدأ اللغز</button>
+</div>
+<div id="puzzleInfo" class="muted">لم تبدأ لغزًا بعد.</div>
+</div>
+<div class="panel">
+<h2>تحدي عدم الخسارة</h2>
+<p class="muted">العب ضد الكمبيوتر وحاول إنهاء المباراة دون خسارة. الفوز أو التعادل يحافظ على التحدي.</p>
+<button class="btn" id="noLossBtn">ابدأ التحدي</button>
+<div id="noLossStatus" class="muted">أفضل سلسلة: 0</div>
+</div>
+<div class="panel">
+<h2>مباراة خاصة</h2>
+<div class="row">
+<div class="field"><label for="timeLimit">وقت الحركة</label><select id="timeLimit" class="select"><option value="5">5 ثوانٍ</option><option value="10" selected>10 ثوانٍ</option><option value="15">15 ثانية</option><option value="30">30 ثانية</option></select></div>
+<div class="field"><label for="randomRule">قاعدة خاصة</label><select id="randomRule" class="select"><option value="normal">القواعد العادية</option><option value="reverse">الفوز بالخسارة (تجنب إكمال 3)</option><option value="limited">ثلاث علامات فقط لكل لاعب</option></select></div>
+</div>
+<button class="btn primary" id="specialBtn">ابدأ المباراة الخاصة</button>
+</div>
+</section>
+
+<section class="page hidden" id="page-achievements">
+<div class="panel">
+<h2>🏆 الإنجازات والمكافآت</h2>
+<div class="row">
+<div class="stat"><strong id="achievementCount">0/10</strong><span>الإنجازات</span></div>
+<div class="stat"><strong id="streak">0</strong><span>أفضل سلسلة فوز</span></div>
+<div class="stat"><strong id="gamesTotal">0</strong><span>إجمالي المباريات</span></div>
+</div>
+</div>
+<div class="panel"><div class="achievement-grid" id="achievementList"></div></div>
+<div class="panel">
+<h2>مكافآت الخبرة</h2>
+<div class="mini-list" id="rewardsList"></div>
+</div>
+</section>
+
+<section class="page hidden" id="page-stats">
+<div class="panel">
+<h2>📊 إحصائياتك</h2>
+<div class="stats-grid">
+<div class="stat"><strong id="statGames">0</strong><span>المباريات</span></div>
+<div class="stat"><strong id="statWinRate">0%</strong><span>نسبة الفوز</span></div>
+<div class="stat"><strong id="statDrawRate">0%</strong><span>نسبة التعادل</span></div>
+<div class="stat"><strong id="statMoves">0</strong><span>متوسط الحركات</span></div>
+<div class="stat"><strong id="statWins">0</strong><span>الانتصارات</span></div>
+<div class="stat"><strong id="statLosses">0</strong><span>الخسائر</span></div>
+</div>
+</div>
+<div class="panel"><h2>نتائج آخر 7 مباريات</h2><canvas id="chart" width="700" height="260" aria-label="رسم بياني لنتائج المباريات"></canvas></div>
+<div class="panel">
+<h2>إدارة البيانات</h2>
+<div class="actions">
+<button class="btn" id="exportData">📤 تصدير نسخة احتياطية</button>
+<button class="btn" id="importBtn">📥 استيراد نسخة احتياطية</button>
+<input type="file" id="importFile" accept=".json,application/json" class="hidden">
+<button class="btn" id="resetStats">🧹 تصفير الإحصائيات</button>
+<button class="btn" id="shareStats">🔗 مشاركة النتائج</button>
+</div>
+<p class="muted">البيانات محفوظة على جهازك في المتصفح. لا تُرسل إلى خادم خارجي.</p>
+</div>
+</section>
+
+<section class="page hidden" id="page-settings">
+<div class="panel">
+<h2>🎨 تخصيص المظهر</h2>
+<div class="row">
+<div class="field"><label for="theme">السمة</label><select id="theme" class="select"><option value="dark">داكنة</option><option value="light">فاتحة</option><option value="neon">نيون</option><option value="rose">وردية</option></select></div>
+<div class="field"><label for="effect">تأثير الفوز</label><select id="effect" class="select"><option value="glow">توهج</option><option value="none">بدون تأثير</option><option value="bounce">اهتزاز بسيط</option></select></div>
+</div>
+<div class="row">
+<label><input type="checkbox" id="sound"> تفعيل الصوت</label>
+<label><input type="checkbox" id="vibration"> تفعيل الاهتزاز</label>
+<label><input type="checkbox" id="coachEnabled" checked> تفعيل المدرب الذكي</label>
+</div>
+</div>
+<div class="panel">
+<h2>قواعد اللعب</h2>
+<div class="row">
+<div class="field"><label for="winLength">عدد العلامات اللازمة للفوز</label><select id="winLength" class="select"><option value="3">3 علامات</option><option value="4">4 علامات</option></select></div>
+<div class="field"><label for="firstPlayer">من يبدأ؟</label><select id="firstPlayer" class="select"><option value="X">X يبدأ</option><option value="O">O يبدأ</option></select></div>
+</div>
+<button class="btn primary" id="applySettings">حفظ الإعدادات وبدء مباراة جديدة</button>
+</div>
+<div class="panel">
+<h2>⚠️ إدارة اللعبة</h2>
+<div class="actions">
+<button class="btn" id="resetGameData">إعادة ضبط إعدادات اللعبة</button>
+<button class="btn danger" id="clearAll">حذف كل البيانات المحفوظة</button>
+</div>
+<p class="muted">حذف البيانات لا يمكن التراجع عنه. صدّر نسخة احتياطية أولًا إذا أردت الاحتفاظ بنتائجك.</p>
+</div>
+<div class="panel">
+<h2>حول اللعبة</h2>
+<p class="muted">Ahmed Tools · إكس أو الذكية. لعبة تعمل داخل المتصفح وتستخدم التخزين المحلي لحفظ تقدمك.</p>
+</div>
+</section>
+</main>
+<footer>Ahmed Tools · تحدَّ نفسك، تعلّم من حركاتك، وتقدّم كل يوم.</footer>
+</div>
+<div class="toast hidden" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+"use strict";
+
+const $=id=>document.getElementById(id);
+const STORAGE_KEY="ahmedTicTacToeUltimateV1";
+const symbols={
+xo:{X:"X",O:"O"},
+shapes:{X:"❌",O:"⭕"},
+stars:{X:"⭐",O:"🌙"},
+animals:{X:"🐱",O:"🐼"}
+};
+const defaults={
+theme:"dark",effect:"glow",sound:false,vibration:false,coachEnabled:true,
+winLength:3,firstPlayer:"X",symbolSet:"xo",mode:"cpu",difficulty:"hard",
+boardSize:3,randomRule:"normal",timeLimit:10
+};
+const freshData=()=>({
+scores:{X:0,O:0,draw:0},xp:0,totalGames:0,totalMoves:0,
+wins:0,losses:0,draws:0,currentStreak:0,bestStreak:0,
+history:[],achievements:[],dailyDone:"",dailyDate:"",
+noLossCurrent:0,noLossBest:0,puzzlesSolved:[],
+settings:{...defaults}
+});
+let data=loadData();
+let board=[],turn="X",ended=false,isThinking=false;
+let mode="cpu",size=3,winLength=3,moveTimer=null,clockTimer=null;
+let timeLeft=10,roundMoves=[],undoStack=[],winningCells=[];
+let tournament={played:0,x:0,o:0,draw:0};
+let specialRule="normal",noLossChallenge=false,puzzleMode=false,dailyMode=false;
+let puzzleTarget=null,puzzleDescription="",toastTimer=null;
+let infiniteMoves={X:[],O:[]};
+let ultimate=false,ultimateBoards=[],ultimateWon=[],ultimateForced=-1;
+let currentResult=null;
+
+function loadData(){
+try{
+const raw=localStorage.getItem(STORAGE_KEY);
+if(!raw)return freshData();
+const parsed=JSON.parse(raw);
+const base=freshData();
+if(!parsed||typeof parsed!=="object")return base;
+const num=(v,min=0)=>Number.isFinite(v)&&v>=min?v:min;
+base.scores={X:num(parsed.scores?.X),O:num(parsed.scores?.O),draw:num(parsed.scores?.draw)};
+for(const k of ["xp","totalGames","totalMoves","wins","losses","draws","currentStreak","bestStreak","noLossCurrent","noLossBest"])base[k]=num(parsed[k]);
+base.history=Array.isArray(parsed.history)?parsed.history.filter(x=>x&&typeof x.date==="string"&&["X","O","draw"].includes(x.result)&&typeof x.mode==="string").slice(0,100):[];
+base.achievements=Array.isArray(parsed.achievements)?parsed.achievements.filter(x=>typeof x==="string").slice(0,100):[];
+base.dailyDone=typeof parsed.dailyDone==="string"?parsed.dailyDone:"";
+base.dailyDate=typeof parsed.dailyDate==="string"?parsed.dailyDate:"";
+base.puzzlesSolved=Array.isArray(parsed.puzzlesSolved)?parsed.puzzlesSolved.filter(x=>Number.isInteger(x)&&x>0&&x<100):[];
+base.settings={...defaults,...(parsed.settings&&typeof parsed.settings==="object"?parsed.settings:{})};
+if(!["dark","light","neon","rose"].includes(base.settings.theme))base.settings.theme="dark";
+if(!["easy","medium","hard"].includes(base.settings.difficulty))base.settings.difficulty="hard";
+if(!["cpu","friend","timed","infinite","tournament","ultimate"].includes(base.settings.mode))base.settings.mode="cpu";
+if(!["xo","shapes","stars","animals"].includes(base.settings.symbolSet))base.settings.symbolSet="xo";
+if(![3,4].includes(Number(base.settings.boardSize)))base.settings.boardSize=3;
+if(![3,4].includes(Number(base.settings.winLength)))base.settings.winLength=3;
+return base;
+}catch{return freshData()}
+}
+function saveData(){
+try{localStorage.setItem(STORAGE_KEY,JSON.stringify(data))}
+catch{toast("تعذر الحفظ. قد تكون مساحة التخزين ممتلئة.")}
+}
+function toast(text){
+const el=$("toast");el.textContent=text;el.classList.remove("hidden");
+clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.add("hidden"),2600);
+}
+function sound(freq=500,duration=.09){
+if(!data.settings.sound)return;
+try{
+const C=window.AudioContext||window.webkitAudioContext;
+const ctx=new C(),osc=ctx.createOscillator(),gain=ctx.createGain();
+osc.frequency.value=freq;gain.gain.value=.045;
+osc.connect(gain);gain.connect(ctx.destination);osc.start();
+gain.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+duration);
+osc.stop(ctx.currentTime+duration);osc.onended=()=>ctx.close();
+}catch{}
+}
+function vibrate(){if(data.settings.vibration&&navigator.vibrate)navigator.vibrate(35)}
+function getSymbol(p){return symbols[data.settings.symbolSet]?.[p]||p}
+function todayKey(){return new Date().toLocaleDateString("en-CA")}
+function cancelTimers(){
+clearTimeout(moveTimer);moveTimer=null;
+clearInterval(clockTimer);clockTimer=null;
+isThinking=false;
+}
+function setPage(name){
+document.querySelectorAll(".page").forEach(p=>p.classList.toggle("hidden",p.id!=="page-"+name));
+document.querySelectorAll(".tab").forEach(b=>b.classList.toggle("active",b.dataset.page===name));
+if(name==="stats")drawChart();
+}
+document.querySelectorAll(".tab").forEach(b=>b.addEventListener("click",()=>setPage(b.dataset.page)));
+
+function setupBoard(){
+ultimate=mode==="ultimate";
+size=ultimate?3:Number(data.settings.boardSize)||3;
+winLength=ultimate?3:Number(data.settings.winLength)||3;
+board=Array(size*size).fill("");
+ultimateBoards=Array.from({length:9},()=>Array(9).fill(""));
+ultimateWon=Array(9).fill("");
+ultimateForced=-1;
+winningCells=[];
+}
+function newGame(options={}){
+cancelTimers();
+if(!options.keepTournament&&mode==="tournament")tournament={played:0,x:0,o:0,draw:0};
+mode=options.mode||data.settings.mode||"cpu";
+size=mode==="ultimate"?3:Number(data.settings.boardSize)||3;
+if(size!==3&&size!==4)size=3;
+winLength=mode==="ultimate"?3:Number(data.settings.winLength)||3;
+if(winLength>size)winLength=size;
+specialRule=options.rule||data.settings.randomRule||"normal";
+puzzleMode=!!options.puzzle;
+dailyMode=!!options.daily;
+noLossChallenge=!!options.noLoss;
+currentResult=null;
+setupBoard();
+turn=options.first||data.settings.firstPlayer||"X";
+ended=false;roundMoves=[];undoStack=[];infiniteMoves={X:[],O:[]};
+timeLeft=Number(data.settings.timeLimit)||10;
+$("difficulty").disabled=mode==="friend"||mode==="ultimate";
+$("boardSize").disabled=mode==="ultimate";
+$("ultimateNotice").classList.toggle("hidden",mode!=="ultimate");
+$("clock").classList.toggle("hidden",mode!=="timed");
+$("difficulty").value=data.settings.difficulty;
+$("boardSize").value=String(data.settings.boardSize);
+$("mode").value=mode;
+render();
+setMessage(puzzleMode?`اللغز: ${puzzleDescription}`:mode==="ultimate"?"العب داخل اللوحة الصغيرة التي يحددها دورك.":"ابدأ اللعب. حاول بناء خط من العلامات للفوز.");
+coach("راقب الصفوف والأعمدة والقطرين، ولا تترك للخصم فرصة الفوز.");
+updateScoreDisplay();
+if(mode==="timed")startClock();
+if(mode==="cpu"&&turn==="O")scheduleCPU();
+}
+function linesFor(n){
+const lines=[];
+for(let r=0;r<n;r++)for(let c=0;c<=n-winLength;c++){
+const line=[];for(let k=0;k<winLength;k++)line.push(r*n+c+k);lines.push(line);
+}
+for(let c=0;c<n;c++)for(let r=0;r<=n-winLength;r++){
+const line=[];for(let k=0;k<winLength;k++)line.push((r+k)*n+c);lines.push(line);
+}
+for(let r=0;r<=n-winLength;r++)for(let c=0;c<=n-winLength;c++){
+let a=[],b=[];for(let k=0;k<winLength;k++){a.push((r+k)*n+c+k);b.push((r+k)*n+c+winLength-1-k)}lines.push(a,b);
+}
+return lines;
+}
+function getWin(b,n,need){
+for(let r=0;r<n;r++)for(let c=0;c<n;c++){
+const p=b[r*n+c];if(!p)continue;
+for(const [dr,dc] of [[0,1],[1,0],[1,1],[1,-1]]){
+const cells=[];let ok=true;
+for(let k=0;k<need;k++){
+const rr=r+dr*k,cc=c+dc*k;
+if(rr<0||rr>=n||cc<0||cc>=n||b[rr*n+cc]!==p){ok=false;break}
+cells.push(rr*n+cc);
+}
+if(ok)return{player:p,cells};
+}
+}
+return null;
+}
+function resultFor(b,n,need){
+const w=getWin(b,n,need);
+if(w)return w.player;
+if(b.every(Boolean))return "draw";
+return null;
+}
+function render(){
+const root=$("board");
+root.innerHTML="";
+root.classList.toggle("four",!ultimate&&size===4);
+if(ultimate){renderUltimate(root);return}
+board.forEach((v,i)=>{
+const b=document.createElement("button");b.type="button";b.className="cell";
+if(v)b.classList.add(v.toLowerCase());
+if(winningCells.includes(i))b.classList.add("winning");
+b.textContent=v?getSymbol(v):"";
+b.setAttribute("aria-label",v?`${getSymbol(v)}، الخانة ${i+1}`:`الخانة ${i+1} فارغة`);
+b.disabled=ended||!!v||isThinking||(mode==="cpu"&&turn==="O")||(mode==="tournament"&&turn==="O")&&false;
+b.addEventListener("click",()=>play(i));
+root.appendChild(b);
+});
+$("turnLabel").textContent=ended?"انتهت المباراة":`دور ${getSymbol(turn)}`;
+}
+function renderUltimate(root){
+root.className="board";
+root.style.gridTemplateColumns="repeat(3,minmax(0,1fr))";
+for(let big=0;big<9;big++){
+const mini=document.createElement("div");
+mini.style.cssText="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:2px;padding:3px;border:1px solid var(--border);border-radius:8px;position:relative;background:var(--panel2);min-width:0";
+if(ultimateForced===big)mini.style.borderColor="var(--accent)";
+if(ultimateWon[big]){mini.style.display="grid";mini.style.placeItems="center";mini.style.fontSize="35px";mini.style.fontWeight="900";mini.style.color=ultimateWon[big]==="X"?"#60a5fa":"#c084fc";mini.textContent=getSymbol(ultimateWon[big]);root.appendChild(mini);continue}
+for(let small=0;small<9;small++){
+const b=document.createElement("button");b.type="button";b.className="cell";
+b.style.cssText="aspect-ratio:1;border-radius:4px;font-size:clamp(10px,3.5vw,22px);padding:0";
+const val=ultimateBoards[big][small];b.textContent=val?getSymbol(val):"";
+b.disabled=ended||!!val||(ultimateForced!==-1&&ultimateForced!==big)||isThinking;
+b.setAttribute("aria-label",`اللوحة ${big+1}، الخانة ${small+1}`);
+b.addEventListener("click",()=>playUltimate(big,small));mini.appendChild(b);
+}
+root.appendChild(mini);
+}
+$("turnLabel").textContent=ended?"انتهت المباراة":`دور ${getSymbol(turn)}`;
+}
+function snapshot(){
+return{board:[...board],turn,ended,roundMoves:roundMoves.map(x=>({...x})),winningCells:[...winningCells],ultimateBoards:ultimateBoards.map(b=>[...b]),ultimateWon:[...ultimateWon],ultimateForced};
+}
+function restoreSnapshot(s){
+board=s.board;turn=s.turn;ended=s.ended;roundMoves=s.roundMoves;winningCells=s.winningCells;
+ultimateBoards=s.ultimateBoards;ultimateWon=s.ultimateWon;ultimateForced=s.ultimateForced;
+render();setMessage("تم التراجع عن الحركة.");if(!ended&&mode==="timed")startClock();
+}
+function play(index){
+if(ultimate)return;
+if(ended||board[index]||isThinking)return;
+if(mode==="cpu"&&turn==="O")return;
+if(puzzleMode&&turn!=="X")return;
+undoStack.push(snapshot());
+board[index]=turn;roundMoves.push({player:turn,index});
+if(specialRule==="limited"||mode==="infinite"){
+infiniteMoves[turn].push(index);
+if(infiniteMoves[turn].length>3){
+const old=infiniteMoves[turn].shift();
+board[old]="";
+}
+}
+sound(turn==="X"?540:390);vibrate();
+const res=resultFor(board,size,winLength);
+if(res){winningCells=getWin(board,size,winLength)?.cells||[];finish(res);return}
+if(specialRule==="reverse"){
+const last=getWin(board,size,winLength);
+if(last){finish(last.player==="X"?"O":"X");return}
+}
+turn=turn==="X"?"O":"X";
+render();
+if(data.settings.coachEnabled)coach(analyzePosition());
+if(mode==="timed")startClock();
+if((mode==="cpu"||mode==="tournament")&&turn==="O")scheduleCPU();
+}
+function playUltimate(big,small){
+if(!ultimate||ended||ultimateBoards[big][small]||(ultimateForced!==-1&&ultimateForced!==big))return;
+undoStack.push(snapshot());
+ultimateBoards[big][small]=turn;
+roundMoves.push({player:turn,index:big*9+small});
+const miniRes=resultFor(ultimateBoards[big],3,3);
+if(miniRes&&miniRes!=="draw")ultimateWon[big]=miniRes;
+else if(miniRes==="draw")ultimateWon[big]="D";
+const meta=ultimateWon.map(x=>x==="D"?"":x);
+const metaRes=getWin(meta,3,3);
+if(metaRes){winningCells=[];finish(metaRes.player);return}
+if(ultimateWon.every(Boolean)){finish("draw");return}
+ultimateForced=ultimateWon[small]?-1:small;
+turn=turn==="X"?"O":"X";render();
+if(mode==="ultimate"&&turn==="O")scheduleCPU();
+}
+function scheduleCPU(){
+if(ended)return;
+cancelTimers();isThinking=true;render();setMessage("الكمبيوتر يفكر...");
+moveTimer=setTimeout(()=>{
+isThinking=false;
+if(ended)return;
+if(ultimate){cpuUltimate();return}
+const index=chooseMove();
+if(index<0)return;
+playCPU(index);
+},mode==="cpu"?250:350);
+}
+function playCPU(index){
+if(ended||board[index])return;
+undoStack.push(snapshot());
+board[index]="O";roundMoves.push({player:"O",index});
+const res=resultFor(board,size,winLength);
+if(res){winningCells=getWin(board,size,winLength)?.cells||[];finish(res);return}
+turn="X";render();setMessage("دورك الآن.");
+if(data.settings.coachEnabled)coach(analyzePosition());
+if(mode==="timed")startClock();
+}
+function cpuUltimate(){
+const legal=[];
+for(let big=0;big<9;big++){
+if(ultimateWon[big]||ultimateForced!==-1&&ultimateForced!==big)continue;
+for(let small=0;small<9;small++)if(!ultimateBoards[big][small])legal.push([big,small]);
+}
+if(!legal.length){finish("draw");return}
+const [b,s]=legal[Math.floor(Math.random()*legal.length)];
+isThinking=false;playUltimate(b,s);
+}
+function chooseMove(){
+const empty=board.map((v,i)=>v? -1:i).filter(i=>i>=0);
+if(!empty.length)return -1;
+if(data.settings.difficulty==="easy")return empty[Math.floor(Math.random()*empty.length)];
+const win=findImmediateMove("O");if(win!==-1)return win;
+const block=findImmediateMove("X");if(block!==-1)return block;
+if(data.settings.difficulty==="medium"){
+const corners=empty.filter(i=>[0,size-1,size*(size-1),size*size-1].includes(i));
+if(corners.length)return corners[Math.floor(Math.random()*corners.length)];
+return empty[Math.floor(Math.random()*empty.length)];
+}
+if(size===3&&winLength===3)return minimaxBest();
+return heuristicBest(empty);
+}
+function findImmediateMove(player){
+for(let i=0;i<board.length;i++)if(!board[i]){
+board[i]=player;const w=getWin(board,size,winLength);board[i]="";
+if(w&&w.player===player)return i;
+}
+return -1;
+}
+function minimaxBest(){
+let best=-Infinity,choice=-1;
+for(let i=0;i<9;i++)if(!board[i]){
+board[i]="O";const score=minimax(board,"X",0);board[i]="";
+if(score>best){best=score;choice=i}
+}
+return choice;
+}
+function minimax(b,player,depth){
+const res=resultFor(b,3,3);
+if(res==="O")return 10-depth;
+if(res==="X")return depth-10;
+if(res==="draw")return 0;
+let best=player==="O"?-Infinity:Infinity;
+for(let i=0;i<9;i++)if(!b[i]){
+b[i]=player;const val=minimax(b,player==="O"?"X":"O",depth+1);b[i]="";
+best=player==="O"?Math.max(best,val):Math.min(best,val);
+}
+return best;
+}
+function heuristicBest(empty){
+let best=-Infinity,choice=empty[0];
+for(const i of empty){
+board[i]="O";
+let score=0;
+for(const line of linesFor(size)){
+const vals=line.map(x=>board[x]);
+if(vals.includes("X")&&vals.includes("O"))continue;
+const os=vals.filter(x=>x==="O").length,xs=vals.filter(x=>x==="X").length;
+score+=os*os*3-xs*xs*2;
+}
+board[i]="";
+if(score>best){best=score;choice=i}
+}
+return choice;
+}
+function finish(result){
+if(ended)return;
+ended=true;cancelTimers();currentResult=result;
+const won=getWin(board,size,winLength);
+if(won)winningCells=won.cells;
+const label=result==="draw"?"تعادل":`الفائز ${getSymbol(result)}`;
+setMessage(label+"! "+(result==="draw"?"مباراة متوازنة.":"أحسنت، استمر في التدريب."));
+sound(result==="draw"?280:780,.2);vibrate();
+if(mode==="tournament"){
+tournament.played++;
+if(result==="X")tournament.x++;else if(result==="O")tournament.o++;else tournament.draw++;
+}
+recordResult(result);
+render();updateScoreDisplay();updateAchievements();updateStats();
+if(noLossChallenge){
+if(result==="X"||result==="draw"){data.noLossCurrent++;data.noLossBest=Math.max(data.noLossBest,data.noLossCurrent)}
+else data.noLossCurrent=0;
+$("noLossStatus").textContent=`السلسلة الحالية: ${data.noLossCurrent} · أفضل سلسلة: ${data.noLossBest}`;
+}
+if(puzzleMode&&result==="X"){
+const id=Number($("puzzleSelect").value);
+if(!data.puzzlesSolved.includes(id)){data.puzzlesSolved.push(id);gainXP(40);saveData();$("puzzleInfo").textContent="رائع! حللت اللغز بنجاح وربحت 40 XP."}
+}
+if(dailyMode&&result==="X"){
+data.dailyDone=todayKey();gainXP(50);saveData();$("dailyStatus").textContent="مكتمل";
+}
+if(mode==="tournament"){
+$("tournamentStatus").textContent=`البطولة: ${tournament.played} من 3 · X: ${tournament.x} · O: ${tournament.o}`;
+$("tournamentProgress").style.width=(tournament.played/3*100)+"%";
+if(tournament.played>=3){
+const champ=tournament.x>tournament.o?"X":tournament.o>tournament.x?"O":"تعادل";
+toast(champ==="تعادل"?"انتهت البطولة بالتعادل":`بطل البطولة: ${getSymbol(champ)}`);
+gainXP(60);
+}else toast("انتهت الجولة. اضغط مباراة جديدة لبدء الجولة التالية.");
+}
+}
+function recordResult(result){
+data.totalGames++;data.totalMoves+=roundMoves.length;
+if(result==="draw"){data.draws++;data.scores.draw++;data.currentStreak=0}
+else{
+data.scores[result]++;
+if(result==="X"){data.wins++;data.currentStreak++;data.bestStreak=Math.max(data.bestStreak,data.currentStreak);gainXP(20)}
+else{data.losses++;data.currentStreak=0;gainXP(5)}
+}
+if(result==="draw")gainXP(10);
+data.history.unshift({result,mode,date:new Date().toISOString(),moves:roundMoves.length});
+data.history=data.history.slice(0,100);
+saveData();updateRecent();updateXP();
+}
+function gainXP(n){data.xp+=n;saveData();updateXP()}
+function coach(text){$("coach").textContent=data.settings.coachEnabled?text:"المدرب الذكي متوقف من الإعدادات."}
+function setMessage(text){$("message").textContent=text}
+function analyzePosition(){
+if(ended)return"انتهت المباراة. راجع النتيجة وتعلّم من الحركات السابقة.";
+if(ultimate)return"في إكس أو الكبرى، انتبه إلى اللوحة الصغيرة التي سترسل الخصم إليها بحركتك.";
+if(board.every(v=>!v))return"ابدأ بالوسط أو بأحد الأركان. هذه الخيارات تمنحك فرصًا تكتيكية جيدة.";
+const own=findImmediateMove(turn);
+if(own!==-1)return`لديك فرصة فوز مباشرة في الخانة ${own+1}. لا تفوّتها!`;
+const enemy=turn==="X"?"O":"X",block=findImmediateMove(enemy);
+if(block!==-1)return`احذر! يجب أن تفكر في إيقاف الخصم عند الخانة ${block+1}.`;
+return"لا توجد فرصة فوز فورية واضحة. اصنع تهديدين معًا، وراقب الخطوط المفتوحة للخصم.";
+}
+function hint(){
+if(ended)return toast("انتهت المباراة بالفعل.");
+if(ultimate)return toast("حاول احتلال وسط لوحة صغيرة أو منع الخصم من إكمال خط.");
+const win=findImmediateMove(turn);
+if(win!==-1){toast(`أفضل تلميح: العب في الخانة ${win+1}`);highlightHint(win);return}
+const block=findImmediateMove(turn==="X"?"O":"X");
+if(block!==-1){toast(`التلميح: امنع الخصم في الخانة ${block+1}`);highlightHint(block);return}
+let move;
+if(size===3&&winLength===3)move=bestForPlayer(turn);
+else move=heuristicBest(board.map((v,i)=>v?-1:i).filter(i=>i>=0));
+toast(move>=0?`التلميح المقترح: الخانة ${move+1}`:"لا توجد حركة متاحة.");
+if(move>=0)highlightHint(move);
+}
+function bestForPlayer(player){
+let best=-Infinity,choice=-1;
+for(let i=0;i<9;i++)if(!board[i]){
+board[i]=player;
+const score=hintMinimax(board,player==="X"?"O":"X",0,player);
+board[i]="";
+if(score>best){best=score;choice=i}
+}
+return choice;
+}
+function hintMinimax(b,player,depth,me){
+const res=resultFor(b,3,3);
+if(res===me)return 10-depth;
+if(res&&res!=="draw")return depth-10;
+if(res==="draw")return 0;
+let best=player===me?-Infinity:Infinity;
+for(let i=0;i<9;i++)if(!b[i]){
+b[i]=player;const s=hintMinimax(b,player==="X"?"O":"X",depth+1,me);b[i]="";
+best=player===me?Math.max(best,s):Math.min(best,s);
+}
+return best;
+}
+function highlightHint(i){
+document.querySelectorAll(".cell").forEach((el,index)=>{if(index===i){el.style.outline="3px solid #facc15";setTimeout(()=>el.style.outline="",1800)}});
+}
+function analyzeMatch(){
+if(!roundMoves.length){toast("العب بعض الحركات أولًا لتحليل المباراة.");return}
+const x=roundMoves.filter(m=>m.player==="X").length,o=roundMoves.filter(m=>m.player==="O").length;
+let msg=`تحليل المباراة: ${roundMoves.length} حركة. X لعب ${x} حركات وO لعب ${o}. `;
+if(currentResult==="X")msg+="فاز X. راجع الحركات التي صنعت خط الفوز.";
+else if(currentResult==="O")msg+="فاز O. حاول منع تهديدات الخصم مبكرًا.";
+else if(ended)msg+="انتهت المباراة بالتعادل.";
+else msg+=analyzePosition();
+coach(msg);toast(msg);
+}
+function startClock(){
+clearInterval(clockTimer);timeLeft=Number(data.settings.timeLimit)||10;$("clock").textContent=timeLeft;
+clockTimer=setInterval(()=>{
+if(ended||mode!=="timed"){clearInterval(clockTimer);return}
+timeLeft--;$("clock").textContent=timeLeft;
+if(timeLeft<=0){
+clearInterval(clockTimer);
+if(!ended){const lost=turn;finish(lost==="X"?"O":"X");setMessage(`انتهى الوقت! فاز ${getSymbol(lost==="X"?"O":"X")}.`)}
+}
+},1000);
+}
+function updateScoreDisplay(){
+$("scoreX").textContent=data.scores.X;$("scoreO").textContent=data.scores.O;$("scoreDraw").textContent=data.scores.draw;
+$("labelX").textContent=mode==="cpu"?"انتصاراتك (X)":"انتصارات X";
+$("labelO").textContent=mode==="cpu"?"انتصارات الكمبيوتر (O)":"انتصارات O";
+$("tournamentStatus").textContent=`البطولة: ${tournament.played} من 3 جولات`;
+$("tournamentProgress").style.width=(tournament.played/3*100)+"%";
+}
+function updateXP(){
+$("xp").textContent=data.xp;
+const levels=[["مبتدئ",0],["متعلم",100],["متقدم",300],["محترف",700],["أسطورة",1500]];
+let current=levels[0],next=null;
+for(let i=0;i<levels.length;i++){if(data.xp>=levels[i][1])current=levels[i];if(data.xp<levels[i][1]){next=levels[i];break}}
+$("level").textContent=current[0];
+if(next){
+$("xpNext").textContent=`${next[1]-data.xp} XP للوصول إلى ${next[0]}`;
+$("xpProgress").style.width=((data.xp-current[1])/(next[1]-current[1])*100)+"%";
+}else{$("xpNext").textContent="وصلت إلى أعلى مستوى!";$("xpProgress").style.width="100%"}
+}
+function updateRecent(){
+const root=$("recentGames");root.innerHTML="";
+const list=data.history.slice(0,5);
+if(!list.length){root.innerHTML='<div class="muted">لا توجد مباريات محفوظة بعد.</div>';return}
+list.forEach(item=>{
+const div=document.createElement("div");div.className="list-item";
+const left=document.createElement("span");
+left.textContent=`${item.result==="draw"?"تعادل":`فوز ${getSymbol(item.result)}`} · ${item.moves} حركة`;
+const right=document.createElement("span");right.className="badge";
+right.textContent=new Date(item.date).toLocaleDateString("ar");
+div.append(left,right);root.appendChild(div);
+});
+}
+const achievementDefs=[
+{id:"first",name:"البداية",desc:"أكمل أول مباراة",emoji:"🎮",test:()=>data.totalGames>=1},
+{id:"win",name:"أول انتصار",desc:"اربح مباراة",emoji:"🥇",test:()=>data.wins>=1},
+{id:"five",name:"خمسة انتصارات",desc:"اربح 5 مباريات",emoji:"🏆",test:()=>data.wins>=5},
+{id:"ten",name:"عشرة انتصارات",desc:"اربح 10 مباريات",emoji:"🔥",test:()=>data.wins>=10},
+{id:"streak",name:"سلسلة الفوز",desc:"اربح 3 مرات متتالية",emoji:"⚡",test:()=>data.bestStreak>=3},
+{id:"games",name:"لاعب نشيط",desc:"أكمل 20 مباراة",emoji:"🎯",test:()=>data.totalGames>=20},
+{id:"puzzle",name:"محلل الألغاز",desc:"حل لغزًا",emoji:"🧩",test:()=>data.puzzlesSolved.length>=1},
+{id:"daily",name:"التزام يومي",desc:"أكمل تحدي اليوم",emoji:"📅",test:()=>data.dailyDone===todayKey()},
+{id:"xp",name:"جامع الخبرة",desc:"اجمع 300 XP",emoji:"✨",test:()=>data.xp>=300},
+{id:"legend",name:"الأسطورة",desc:"اجمع 1500 XP",emoji:"👑",test:()=>data.xp>=1500}
+];
+function updateAchievements(){
+const root=$("achievementList");root.innerHTML="";
+achievementDefs.forEach(a=>{
+const unlocked=a.test();
+if(unlocked&&!data.achievements.includes(a.id)){data.achievements.push(a.id);saveData();toast(`إنجاز جديد: ${a.name}`)}
+const div=document.createElement("div");div.className="achievement"+(unlocked?"":" locked");
+const emoji=document.createElement("div");emoji.className="emoji";emoji.textContent=a.emoji;
+const strong=document.createElement("strong");strong.textContent=a.name;
+const span=document.createElement("span");span.textContent=a.desc;
+div.append(emoji,strong,span);root.appendChild(div);
+});
+$("achievementCount").textContent=`${achievementDefs.filter(a=>a.test()).length}/${achievementDefs.length}`;
+$("streak").textContent=data.bestStreak;$("gamesTotal").textContent=data.totalGames;
+const rewards=$("rewardsList");rewards.innerHTML="";
+[["مبتدئ",0],["متعلم",100],["متقدم",300],["محترف",700],["أسطورة",1500]].forEach(([name,xp])=>{
+const d=document.createElement("div");d.className="list-item";
+const a=document.createElement("span");a.textContent=name;
+const b=document.createElement("span");b.className="badge";b.textContent=`${xp} XP`;
+d.append(a,b);rewards.appendChild(d);
+});
+}
+function updateStats(){
+const total=data.totalGames;
+$("statGames").textContent=total;
+$("statWinRate").textContent=(total?Math.round(data.wins/total*100):0)+"%";
+$("statDrawRate").textContent=(total?Math.round(data.draws/total*100):0)+"%";
+$("statMoves").textContent=(total?Math.round(data.totalMoves/total*10)/10:0);
+$("statWins").textContent=data.wins;$("statLosses").textContent=data.losses;
+drawChart();
+}
+function drawChart(){
+const canvas=$("chart");if(!canvas)return;
+const ctx=canvas.getContext("2d");if(!ctx)return;
+const w=canvas.width,h=canvas.height;
+ctx.clearRect(0,0,w,h);
+const recent=data.history.slice(0,7).reverse();
+const styles=getComputedStyle(document.body);
+const muted=styles.getPropertyValue("--muted").trim()||"#999";
+const border=styles.getPropertyValue("--border").trim()||"#555";
+ctx.strokeStyle=border;ctx.lineWidth=1;
+for(let i=0;i<5;i++){const y=25+i*48;ctx.beginPath();ctx.moveTo(45,y);ctx.lineTo(w-15,y);ctx.stroke()}
+ctx.font="16px system-ui";ctx.textAlign="center";ctx.fillStyle=muted;
+if(!recent.length){ctx.fillText("أكمل مباراة لعرض الرسم البياني",w/2,h/2);return}
+const bw=Math.min(60,(w-80)/recent.length-10),gap=(w-70)/recent.length;
+recent.forEach((item,i)=>{
+const x=55+i*gap,barH=item.result==="draw"?24:90;
+ctx.fillStyle=item.result==="draw"?"#94a3b8":item.result==="X"?"#60a5fa":"#c084fc";
+ctx.fillRect(x,h-40-barH,bw,barH);
+ctx.fillStyle=muted;ctx.font="12px system-ui";
+ctx.fillText(item.result==="draw"?"تعادل":item.result,w>500?x+bw/2:x+bw/2,h-16);
+});
+}
+function applyTheme(){
+document.body.classList.remove("light","neon","rose");
+if(data.settings.theme!=="dark")document.body.classList.add(data.settings.theme);
+$("theme").value=data.settings.theme;
+$("effect").value=data.settings.effect;
+$("sound").checked=data.settings.sound;
+$("vibration").checked=data.settings.vibration;
+$("coachEnabled").checked=data.settings.coachEnabled;
+$("winLength").value=String(data.settings.winLength);
+$("firstPlayer").value=data.settings.firstPlayer;
+$("symbolSet").value=data.settings.symbolSet;
+$("timeLimit").value=String(data.settings.timeLimit);
+$("randomRule").value=data.settings.randomRule;
+$("themeQuick").textContent=data.settings.theme==="light"?"☀️":data.settings.theme==="neon"?"💚":data.settings.theme==="rose"?"🌸":"🌙";
+}
+function startPuzzle(id,daily=false){
+mode="friend";
+let b,description;
+if(id===1){b=["X","X","","O","O","","","",""];description="أكمل خط X للفوز."}
+else if(id===2){b=["O","O","","X","","","","X",""];description="أوقف الخصم قبل أن يكمل خطه."}
+else{b=["X","","","","X","","O","",""];description="ابحث عن الحركة التي تصنع خط فوز."}
+data.settings.mode="friend";saveData();
+newGame({mode:"friend",puzzle:true,daily});
+board=b;turn="X";ended=false;roundMoves=[];undoStack=[];winningCells=[];
+puzzleTarget=id;puzzleDescription=description;
+$("puzzleInfo").textContent=description;
+render();setMessage(description);coach("فكر قبل الحركة. افحص هل يمكنك الفوز الآن أو هل يجب منع الخصم.");
+if(daily)$("dailyStatus").textContent=data.dailyDone===todayKey()?"مكتمل":"قيد اللعب";
+}
+function exportData(){
+const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});
+const url=URL.createObjectURL(blob),a=document.createElement("a");
+a.href=url;a.download="ahmed-tools-tic-tac-toe-backup.json";a.click();
+URL.revokeObjectURL(url);toast("تم تجهيز النسخة الاحتياطية.");
+}
+function importData(file){
+const reader=new FileReader();
+reader.onload=()=>{
+try{
+const parsed=JSON.parse(reader.result);
+if(!parsed||typeof parsed!=="object"||!parsed.scores||!Array.isArray(parsed.history))throw new Error("invalid");
+const clean=freshData();
+clean.scores={X:Math.max(0,Number(parsed.scores.X)||0),O:Math.max(0,Number(parsed.scores.O)||0),draw:Math.max(0,Number(parsed.scores.draw)||0)};
+["xp","totalGames","totalMoves","wins","losses","draws","currentStreak","bestStreak","noLossCurrent","noLossBest"].forEach(k=>clean[k]=Math.max(0,Number(parsed[k])||0));
+clean.history=parsed.history.filter(x=>x&&typeof x.date==="string"&&["X","O","draw"].includes(x.result)&&typeof x.mode==="string").slice(0,100);
+clean.achievements=Array.isArray(parsed.achievements)?parsed.achievements.filter(x=>typeof x==="string"): [];
+clean.puzzlesSolved=Array.isArray(parsed.puzzlesSolved)?parsed.puzzlesSolved.filter(Number.isInteger):[];
+clean.dailyDone=typeof parsed.dailyDone==="string"?parsed.dailyDone:"";
+clean.settings={...defaults,...(parsed.settings||{})};
+data=clean;saveData();applyTheme();newGame();updateRecent();updateXP();updateAchievements();updateStats();toast("تم استيراد البيانات بنجاح.");
+}catch{toast("الملف غير صالح أو ليس نسخة احتياطية للعبة.")}
+};
+reader.readAsText(file);
+}
+
+$("mode").addEventListener("change",()=>{
+data.settings.mode=$("mode").value;saveData();newGame();
+});
+$("difficulty").addEventListener("change",()=>{data.settings.difficulty=$("difficulty").value;saveData();newGame()});
+$("boardSize").addEventListener("change",()=>{data.settings.boardSize=Number($("boardSize").value);if(data.settings.winLength>data.settings.boardSize)data.settings.winLength=data.settings.boardSize;saveData();newGame()});
+$("symbolSet").addEventListener("change",()=>{data.settings.symbolSet=$("symbolSet").value;saveData();render()});
+$("newGame").addEventListener("click",()=>{
+if(mode==="tournament"&&tournament.played>=3){tournament={played:0,x:0,o:0,draw:0}}
+newGame({mode,keepTournament:true});
+});
+$("undo").addEventListener("click",()=>{
+if(ended||isThinking||!undoStack.length)return toast("لا توجد حركة يمكن التراجع عنها الآن.");
+if(mode==="cpu"){
+if(roundMoves.length>=2){undoStack.pop();const s=undoStack.pop();if(s)restoreSnapshot(s)}
+else{const s=undoStack.pop();if(s)restoreSnapshot(s)}
+}else{const s=undoStack.pop();if(s)restoreSnapshot(s)}
+});
+$("hint").addEventListener("click",hint);
+$("analyze").addEventListener("click",analyzeMatch);
+$("dailyBtn").addEventListener("click",()=>{
+if(data.dailyDone===todayKey())return toast("أكملت تحدي اليوم بالفعل!");
+startPuzzle(1,true);
+});
+$("puzzleBtn").addEventListener("click",()=>startPuzzle(Number($("puzzleSelect").value),false));
+$("noLossBtn").addEventListener("click",()=>{data.noLossCurrent=0;noLossChallenge=true;saveData();newGame({mode:"cpu",noLoss:true});$("noLossStatus").textContent=`السلسلة الحالية: ${data.noLossCurrent} · أفضل سلسلة: ${data.noLossBest}`});
+$("specialBtn").addEventListener("click",()=>{
+data.settings.timeLimit=Number($("timeLimit").value);
+data.settings.randomRule=$("randomRule").value;
+data.settings.mode=data.settings.randomRule==="limited"?"infinite":"timed";
+saveData();newGame({mode:data.settings.mode,rule:data.settings.randomRule});
+});
+$("theme").addEventListener("change",()=>{data.settings.theme=$("theme").value;applyTheme();saveData();drawChart()});
+$("themeQuick").addEventListener("click",()=>{
+const themes=["dark","light","neon","rose"],i=themes.indexOf(data.settings.theme);
+data.settings.theme=themes[(i+1)%themes.length];applyTheme();saveData();drawChart();
+});
+$("applySettings").addEventListener("click",()=>{
+data.settings.effect=$("effect").value;
+data.settings.sound=$("sound").checked;
+data.settings.vibration=$("vibration").checked;
+data.settings.coachEnabled=$("coachEnabled").checked;
+data.settings.winLength=Number($("winLength").value);
+data.settings.firstPlayer=$("firstPlayer").value;
+data.settings.symbolSet=$("symbolSet").value;
+data.settings.timeLimit=Number($("timeLimit").value);
+data.settings.randomRule=$("randomRule").value;
+saveData();newGame();toast("تم حفظ الإعدادات.");
+});
+$("exportData").addEventListener("click",exportData);
+$("importBtn").addEventListener("click",()=>$("importFile").click());
+$("importFile").addEventListener("change",e=>{if(e.target.files[0])importData(e.target.files[0]);e.target.value=""});
+$("resetStats").addEventListener("click",()=>{
+if(!confirm("هل تريد تصفير الإحصائيات والنتائج؟"))return;
+const settings={...data.settings};data=freshData();data.settings=settings;saveData();
+newGame();updateRecent();updateXP();updateAchievements();updateStats();toast("تم تصفير الإحصائيات.");
+});
+$("shareStats").addEventListener("click",async()=>{
+const text=`إحصائياتي في Ahmed Tools XO\nالمباريات: ${data.totalGames}\nالانتصارات: ${data.wins}\nنسبة الفوز: ${data.totalGames?Math.round(data.wins/data.totalGames*100):0}%\nالخبرة: ${data.xp} XP`;
+try{if(navigator.share)await navigator.share({title:"إحصائيات إكس أو",text});else if(navigator.clipboard){await navigator.clipboard.writeText(text);toast("تم نسخ الإحصائيات.")}else toast(text)}catch{}
+});
+$("resetGameData").addEventListener("click",()=>{
+if(!confirm("إعادة إعدادات اللعبة إلى الوضع الافتراضي؟"))return;
+data.settings={...defaults};saveData();applyTheme();newGame();toast("تمت إعادة الإعدادات.");
+});
+$("clearAll").addEventListener("click",()=>{
+if(!confirm("سيتم حذف جميع النتائج والخبرة والإنجازات. هل أنت متأكد؟"))return;
+try{localStorage.removeItem(STORAGE_KEY)}catch{}
+data=freshData();applyTheme();newGame();updateRecent();updateXP();updateAchievements();updateStats();toast("تم حذف بيانات اللعبة.");
+});
+document.addEventListener("visibilitychange",()=>{
+if(document.hidden&&mode==="timed"&&!ended){clearInterval(clockTimer)}
+else if(!document.hidden&&mode==="timed"&&!ended)startClock();
+});
+window.addEventListener("resize",()=>{if(!$("page-stats").classList.contains("hidden"))drawChart()});
+
+applyTheme();
+updateXP();updateRecent();updateAchievements();updateStats();
+$("dailyStatus").textContent=data.dailyDone===todayKey()?"مكتمل":"غير مكتمل";
+$("noLossStatus").textContent=`أفضل سلسلة: ${data.noLossBest}`;
+newGame();
+</script>
+</body>
+  </html>
